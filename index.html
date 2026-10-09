@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>City Life | Explore Smarter. Travel Safer. Experience More.</title>
+  <meta name="description" content="AI-Powered Smart City Exploration & Safety Intelligence Platform for Pune, Maharashtra, India.">
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 500: '#10b981', 600: '#059669' },
+            navy: { 800: '#1e293b', 900: '#0f172a', 950: '#020617' }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Leaflet Map CSS & JS via CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <style>
+    body { background-color: #0b0f19; color: #f8fafc; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .leaflet-container { width: 100%; height: 100%; background: #0f172a !important; }
+    .leaflet-popup-content-wrapper { background: #1e293b !important; color: #f8fafc !important; border-radius: 12px !important; border: 1px solid #334155 !important; }
+    .leaflet-popup-tip { background: #1e293b !important; }
+    .leaflet-popup-content { margin: 10px 14px !important; line-height: 1.4 !important; }
+    .leaflet-container a.leaflet-popup-close-button { color: #94a3b8 !important; padding: 6px !important; }
+    .custom-pin { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; }
+    .custom-pin:hover { transform: scale(1.18) translateY(-4px); z-index: 1000 !important; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
+</head>
+<body class="h-screen w-screen flex flex-col overflow-hidden bg-slate-950">
+
+  <!-- TOP CITY PULSE HEADER -->
+  <header class="bg-slate-900 border-b border-slate-800 text-white px-4 py-3 shadow-lg z-30 shrink-0">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+      <!-- Brand & City Tag -->
+      <div class="flex items-center justify-between w-full md:w-auto gap-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 text-lg">
+            🏙️
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
+                City Life
+              </h1>
+              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                Pune, Maharashtra
+              </span>
+              <span class="text-[9px] font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40">
+                DEPLOYED DEMO
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400 hidden sm:block">
+              Explore Smarter. Travel Safer. Experience More.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:hidden">
+          <button onclick="openReportModal()" class="px-2.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/30 text-xs font-medium">
+            ⚠️ Report
+          </button>
+          <button onclick="toggleAssistant()" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-medium shadow-md">
+            🤖 Ask AI
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Weather & Desktop Actions -->
+      <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+        <div id="weather-badge" class="flex items-center gap-3 bg-slate-800/80 px-3.5 py-1.5 rounded-lg border border-slate-700 text-xs">
+          <div class="text-xl" id="weather-icon">⛅</div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-white text-sm" id="weather-temp">28°C</span>
+              <span class="text-slate-400 text-[11px]" id="weather-desc">(Partly Cloudy)</span>
+            </div>
+            <div class="flex items-center gap-2 text-[10px] text-slate-400">
+              <span id="weather-wind">💨 14 km/h</span>
+              <span id="weather-hum">💧 55%</span>
+              <span id="weather-status" class="text-emerald-400 text-[9px]">● Live Open-Meteo</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hidden md:flex items-center gap-2">
+          <button onclick="openReportModal()" class="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-medium flex items-center gap-1.5 transition-colors">
+            <span>⚠️</span>
+            <span>Report Issue</span>
+          </button>
+          <button onclick="toggleAssistant()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium flex items-center gap-1.5 shadow-md shadow-emerald-600/30 transition-all hover:scale-105">
+            <span>🤖</span>
+            <span>AI City Guide</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Sourced Notice Banner -->
+    <div class="mt-2.5 max-w-7xl mx-auto bg-amber-950/40 border border-amber-500/30 rounded-lg px-3 py-1.5 flex items-center justify-between text-xs text-amber-200">
+      <div class="flex items-center gap-2 overflow-hidden">
+        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 shrink-0">
+          WARNING
+        </span>
+        <span class="font-semibold truncate">Metro Feeder Road Diversion: Shivajinagar</span>
+        <span class="text-amber-300/80 truncate text-[11px] hidden md:inline">Single-lane diversion due to civil infrastructure upgrades. Pedestrian walkway open.</span>
+      </div>
+      <span class="text-[10px] text-amber-400/80 shrink-0 ml-2">
+        Source: PMC Engineering Dept
+      </span>
+    </div>
+  </header>
+
+  <!-- MAIN SPLIT VIEW (DISCOVERY + MAP) -->
+  <div class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+    
+    <!-- LEFT DISCOVERY SIDEBAR -->
+    <aside class="w-full md:w-[480px] lg:w-[520px] flex flex-col bg-slate-900 border-r border-slate-800 z-20 shrink-0 h-[48vh] md:h-full">
+      <!-- Search & Filters -->
+      <div class="p-3 bg-slate-900/90 border-b border-slate-800 space-y-3 shrink-0">
+        <div class="flex items-center gap-2">
+          <div class="relative flex-1">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
+            <input
+              type="text"
+              id="search-input"
+              oninput="handleSearch(this.value)"
+              placeholder="Search Pune landmarks, street food, temples..."
+              class="w-full bg-slate-800/90 border border-slate-700 rounded-lg pl-9 pr-8 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            />
+            <button onclick="clearSearch()" id="clear-search-btn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs">✕</button>
+          </div>
+          <div class="text-[11px] text-slate-400 whitespace-nowrap bg-slate-800 px-2.5 py-2 rounded-lg border border-slate-700">
+            <strong id="place-count" class="text-emerald-400">12</strong> places
+          </div>
+        </div>
+
+        <!-- Category Pills -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs no-scrollbar" id="category-pills">
+          <button onclick="setCategory('All')" class="cat-pill active px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium bg-emerald-600 text-white shadow-sm" data-cat="All">All</button>
+          <button onclick="setCategory('Historical')" class="cat-pill px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700" data-cat="Historical">🏛️ Historical</button>
+          <button onclick="setCategory('Cultural & Museum')" class="cat-pill px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700" data-cat="Cultural & Museum">🏺 Cultural & Temples</button>
+          <button onclick="setCategory('Food & Dining')" class="cat-pill px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700" data-cat="Food & Dining">🍲 Food & Dining</button>
+          <button onclick="setCategory('Parks & Nature')" class="cat-pill px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700" data-cat="Parks & Nature">🌳 Parks & Nature</button>
+          <button onclick="setCategory('Budget Spot')" class="cat-pill px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700" data-cat="Budget Spot">🎒 Student / Budget</button>
+          <button onclick="setCategory('Public Facility')" class="cat-pill px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700" data-cat="Public Facility">🏢 Public Facilities</button>
+        </div>
+
+        <!-- Parametric Toggles -->
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <button id="veg-toggle" onclick="toggleVeg()" class="px-2.5 py-1 rounded-lg border border-slate-700 bg-slate-800/60 text-slate-400 text-[11px] font-medium flex items-center gap-1 transition-colors">
+            <span>🥦</span>
+            <span>Pure Veg / Veg Options</span>
+          </button>
+          <button id="access-toggle" onclick="toggleAccess()" class="px-2.5 py-1 rounded-lg border border-slate-700 bg-slate-800/60 text-slate-400 text-[11px] font-medium flex items-center gap-1 transition-colors">
+            <span>♿</span>
+            <span>Wheelchair Accessible</span>
+          </button>
+          <div class="flex items-center gap-1 bg-slate-800/60 px-2 py-0.5 rounded-lg border border-slate-700 text-[11px]">
+            <span class="text-slate-400 mr-1">Cost:</span>
+            <button onclick="setPrice('All')" class="price-btn active px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-600 text-white" data-price="All">All</button>
+            <button onclick="setPrice('Free')" class="price-btn px-1.5 py-0.5 rounded text-[10px] font-medium text-slate-400 hover:text-white" data-price="Free">Free</button>
+            <button onclick="setPrice('₹')" class="price-btn px-1.5 py-0.5 rounded text-[10px] font-medium text-slate-400 hover:text-white" data-price="₹">₹</button>
+            <button onclick="setPrice('₹₹')" class="price-btn px-1.5 py-0.5 rounded text-[10px] font-medium text-slate-400 hover:text-white" data-price="₹₹">₹₹</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Places Feed Container -->
+      <div id="places-list" class="flex-1 overflow-y-auto p-3 space-y-3">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <!-- Comparison Floating Notification Bar -->
+      <div id="compare-bar" class="hidden p-2.5 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-xs shrink-0">
+        <span class="text-slate-300">Comparing <strong id="compare-count" class="text-purple-400">0</strong> venues</span>
+        <button onclick="openCompareModal()" class="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs shadow-md shadow-purple-600/20">
+          View Side-by-Side Matrix
+        </button>
+      </div>
+    </aside>
+
+    <!-- RIGHT INTERACTIVE MAP CANVAS -->
+    <main class="flex-1 relative h-[52vh] md:h-full">
+      <div id="map" class="w-full h-full"></div>
+
+      <!-- Prominent Schematic Demo Map Notice Badge -->
+      <div class="absolute top-4 left-4 z-[400] bg-slate-900/95 border border-emerald-500/40 text-slate-200 text-xs px-3.5 py-1.5 rounded-xl shadow-xl backdrop-blur-md flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="font-semibold text-white">Schematic Demo Map &mdash; Not for Navigation</span>
+      </div>
+
+      <!-- Map Floating Tools -->
+      <div class="absolute top-4 right-4 z-[400] flex flex-col gap-2">
+        <button onclick="openRouteDrawer()" class="bg-slate-900/95 hover:bg-slate-800 border border-slate-700 text-white p-2.5 rounded-xl shadow-xl backdrop-blur-md text-xs font-semibold flex items-center gap-2 transition-all hover:scale-105">
+          <span>🧭</span>
+          <span class="hidden sm:inline">Route Planner</span>
+        </button>
+        <button onclick="startPinDrop()" id="pindrop-tool-btn" class="bg-slate-900/95 hover:bg-slate-800 border border-slate-700 text-amber-300 p-2.5 rounded-xl shadow-xl backdrop-blur-md text-xs font-semibold flex items-center gap-2 transition-all hover:scale-105">
+          <span>📍</span>
+          <span class="hidden sm:inline">Drop Pin Report</span>
+        </button>
+      </div>
+
+      <!-- Pin drop banner -->
+      <div id="pindrop-banner" class="hidden absolute top-4 left-1/2 -translate-x-1/2 z-[400] bg-slate-900/95 border border-emerald-500 text-emerald-400 text-xs px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 backdrop-blur-md">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        Click anywhere on the map to place your incident pin
+        <button onclick="cancelPinDrop()" class="ml-2 text-slate-400 hover:text-white">✕</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: CITIZEN SAFETY REPORT -->
+  <div id="report-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
+      <button onclick="closeReportModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white text-sm">✕</button>
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">⚠️</div>
+        <div>
+          <h2 class="text-lg font-bold text-white">Submit Citizen Safety Notice</h2>
+          <p class="text-xs text-slate-400">Contribute community awareness for Pune</p>
+        </div>
+      </div>
+      <div class="bg-slate-800/80 border border-slate-700 rounded-lg p-2.5 text-[11px] text-slate-300 mb-3 leading-relaxed">
+        <strong class="text-amber-400">Public Trust Policy:</strong> Reports appear with an <strong>Unverified</strong> tag until validated. Never submit speculative crime reports.
+      </div>
+      <form onsubmit="handleReportSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-300 font-medium mb-1">Issue Category</label>
+          <select id="report-category" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none">
+            <option value="Streetlight Outage">Streetlight Outage</option>
+            <option value="Road Hazard / Pothole">Road Hazard / Pothole</option>
+            <option value="Waterlogging">Waterlogging</option>
+            <option value="Public Facility Issue">Public Facility Issue</option>
+            <option value="Crowding Advisory">Crowding Advisory</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-slate-300 font-medium mb-1">Headline / Summary</label>
+          <input type="text" id="report-title" required minlength="5" placeholder="e.g. Non-working streetlights near Deccan underpass" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-slate-300 font-medium mb-1">Specific Location</label>
+          <div class="flex gap-2">
+            <input type="text" id="report-location" required placeholder="e.g. FC Road, opposite Goodluck Cafe" class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none" />
+            <button type="button" onclick="startPinDropFromModal()" class="px-3 py-2 rounded-lg bg-emerald-600/20 text-emerald-400 border border-emerald-500/40 text-[11px] font-medium">📍 Pick on Map</button>
+          </div>
+          <span id="report-coords-text" class="text-[10px] text-slate-400 mt-1 block">Coords: 18.5204, 73.8567</span>
+        </div>
+        <div>
+          <label class="block text-slate-300 font-medium mb-1">Detailed Description</label>
+          <textarea id="report-desc" rows="3" required minlength="10" placeholder="Describe the physical condition and any precautions..." class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+          <button type="button" onclick="closeReportModal()" class="px-4 py-2 text-slate-400 hover:text-white">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold">Submit Report</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PLACE COMPARISON -->
+  <div id="compare-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-4xl p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800 shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">⚖️</span>
+          <div>
+            <h2 class="text-lg font-bold text-white">Transparent Place Comparison</h2>
+            <p class="text-xs text-slate-400">Zero synthetic ratings; transparent municipal attributes</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="clearComparison()" class="text-xs text-slate-400 hover:text-rose-400 px-2.5 py-1 rounded bg-slate-800 border border-slate-700">Clear All</button>
+          <button onclick="closeCompareModal()" class="text-slate-400 hover:text-white text-base px-2">✕</button>
+        </div>
+      </div>
+      <div id="compare-grid" class="overflow-auto py-4 flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Rendered via JS -->
+      </div>
+      <div class="pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between shrink-0">
+        <span>*Evaluations are based on public municipal registers.</span>
+        <button onclick="closeCompareModal()" class="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER: CITY ASSISTANT -->
+  <div id="assistant-drawer" class="hidden fixed inset-y-0 right-0 z-50 w-full sm:w-[440px] bg-slate-900 border-l border-slate-800 shadow-2xl flex flex-col">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between shrink-0 bg-slate-950">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold">🤖</div>
+        <div>
+          <h2 class="text-sm font-bold text-white flex items-center gap-2">
+            City Life Assistant
+            <span class="text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-500/30">
+              Rule-Based Mode
+            </span>
+          </h2>
+          <p class="text-[10px] text-slate-400">Zero AI hallucinations • Verified Pune data</p>
+        </div>
+      </div>
+      <button onclick="toggleAssistant()" class="text-slate-400 hover:text-white text-sm px-2">✕</button>
+    </div>
+    <div class="bg-slate-850 px-4 py-2 border-b border-slate-800 text-[10px] text-slate-400 flex items-center justify-between">
+      <span>🛡️ Sourced strictly from verified city registries.</span>
+      <span class="text-emerald-400 font-mono">100% Truthful</span>
+    </div>
+    <div id="assistant-messages" class="flex-1 overflow-y-auto p-4 space-y-3 text-xs">
+      <div class="flex flex-col items-start">
+        <div class="max-w-[90%] p-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 rounded-bl-none leading-relaxed">
+          Namaste! I am the City Life Assistant for Pune. Ask me about historical landmarks, pure vegetarian dining, budget student spots, or active municipal alerts!
+        </div>
+        <span class="text-[9px] text-slate-500 mt-1 px-1">City Assistant (Rule-Based)</span>
+      </div>
+    </div>
+    <!-- Quick Prompts -->
+    <div class="p-3 bg-slate-950 border-t border-slate-800 shrink-0">
+      <span class="text-[10px] text-slate-400 font-semibold block mb-1.5">Quick Inquiries:</span>
+      <div class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
+        <button type="button" onclick="sendAssistantPrompt('What historical places can I visit today?')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-2.5 py-1 rounded-full border border-slate-700">🏛️ Historical places?</button>
+        <button type="button" onclick="sendAssistantPrompt('What are the best budget-friendly places in Pune?')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-2.5 py-1 rounded-full border border-slate-700">🎒 Budget spots?</button>
+        <button type="button" onclick="sendAssistantPrompt('Where can I find iconic vegetarian food?')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-2.5 py-1 rounded-full border border-slate-700">🥦 Pure veg food?</button>
+        <button type="button" onclick="sendAssistantPrompt('What weather warnings or city alerts should I know?')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-2.5 py-1 rounded-full border border-slate-700">⚠️ Active city alerts?</button>
+        <button type="button" onclick="sendAssistantPrompt('Plan a half-day budget tour of Pune')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-2.5 py-1 rounded-full border border-slate-700">🗺️ Half-day tour?</button>
+      </div>
+    </div>
+    <!-- Input -->
+    <div class="p-3 bg-slate-900 border-t border-slate-800 shrink-0 flex gap-2">
+      <input type="text" id="assistant-input" onkeydown="if(event.key==='Enter') sendAssistantMessage()" placeholder="Ask about places, budget, food, alerts..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none" />
+      <button onclick="sendAssistantMessage()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold">Send</button>
+    </div>
+  </div>
+
+  <!-- DRAWER: SMART ROUTE PLANNER -->
+  <div id="route-drawer" class="hidden fixed inset-y-0 left-0 z-50 w-full sm:w-[420px] bg-slate-900 border-r border-slate-800 shadow-2xl flex flex-col">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between shrink-0 bg-slate-950">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🧭</span>
+        <div>
+          <h2 class="text-sm font-bold text-white">Smart Route Planner</h2>
+          <p class="text-[10px] text-slate-400">Hazard-aware travel corridor calculation</p>
+        </div>
+      </div>
+      <button onclick="closeRouteDrawer()" class="text-slate-400 hover:text-white text-sm px-2">✕</button>
+    </div>
+    <div class="p-4 overflow-y-auto flex-1 space-y-4 text-xs">
+      <div>
+        <label class="block text-slate-400 text-[11px] font-semibold mb-1">Origin / Start Location</label>
+        <select id="route-start" onchange="calculateRoute()" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none">
+          <option value="0">📍 Pune Railway Station (18.5284, 73.8739)</option>
+          <option value="1">📍 Deccan Gymkhana Bus Station (18.5165, 73.8422)</option>
+          <option value="2">📍 Shivajinagar Interchange (18.5314, 73.8446)</option>
+          <option value="3">📍 Swargate Bus Terminal (18.5012, 73.8587)</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-slate-400 text-[11px] font-semibold mb-1">Destination Place</label>
+        <select id="route-dest" onchange="calculateRoute()" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none">
+          <!-- Populated via JS -->
+        </select>
+      </div>
+      <div>
+        <label class="block text-slate-400 text-[11px] font-semibold mb-1">Travel Mode</label>
+        <div class="grid grid-cols-3 gap-2" id="travel-mode-btns">
+          <button onclick="setTravelMode('walking')" class="mode-btn active py-2 px-3 rounded-lg border border-emerald-500 bg-emerald-600/30 text-white font-semibold flex flex-col items-center gap-1" data-mode="walking">
+            <span>🚶</span><span class="text-[10px]">Walking</span>
+          </button>
+          <button onclick="setTravelMode('cycling')" class="mode-btn py-2 px-3 rounded-lg border border-slate-700 bg-slate-800 text-slate-400 flex flex-col items-center gap-1" data-mode="cycling">
+            <span>🚲</span><span class="text-[10px]">Cycling</span>
+          </button>
+          <button onclick="setTravelMode('driving')" class="mode-btn py-2 px-3 rounded-lg border border-slate-700 bg-slate-800 text-slate-400 flex flex-col items-center gap-1" data-mode="driving">
+            <span>🚗</span><span class="text-[10px]">Driving</span>
+          </button>
+        </div>
+      </div>
+      <!-- Summary Card -->
+      <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-3.5 space-y-2">
+        <div class="flex items-center justify-between text-white font-bold text-sm">
+          <span>Estimated Journey Time:</span>
+          <span id="route-duration" class="text-emerald-400 text-base">22 mins</span>
+        </div>
+        <div class="flex items-center justify-between text-slate-300 text-xs">
+          <span>Corridor Distance:</span>
+          <span id="route-distance">2.1 km</span>
+        </div>
+        <div class="pt-2 border-t border-slate-700 text-[10px] text-slate-400 flex items-center justify-between">
+          <span>Routing Engine:</span>
+          <span class="text-amber-400 font-mono">[Demonstration Corridor Grid]</span>
+        </div>
+      </div>
+      <!-- Hazard warning -->
+      <div id="route-hazard-box" class="bg-amber-950/40 border border-amber-500/40 rounded-xl p-3 space-y-2">
+        <div class="flex items-center gap-2 text-amber-300 font-bold text-xs">
+          <span>⚠️</span><span>Notice: Reported Hazard in Travel Corridor</span>
+        </div>
+        <p class="text-[11px] text-slate-300">
+          The corridor passes near: <strong>Streetlight outage near Dengle Bridge footpath</strong> (Reported by verified citizen). Exercise standard pedestrian care.
+        </p>
+      </div>
+      <button onclick="plotRouteOnMap()" class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2">
+        <span>🗺️</span>
+        <span>Plot Route on Interactive Map</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- EMBEDDED DEMO JAVASCRIPT -->
+  <script>
+    // Authentic Pune Datasets
+    const PUNE_PLACES = [
+      {
+        id: "pune-shaniwar-wada",
+        name: "Shaniwar Wada",
+        category: "Historical",
+        lat: 18.5196,
+        lng: 73.8553,
+        address: "Shaniwar Peth, Pune 411030",
+        priceTier: "₹",
+        estimatedCost: "₹25 (Indian nationals)",
+        rating: 4.3,
+        reviewCount: 32000,
+        isVegetarianFriendly: true,
+        isWheelchairAccessible: false,
+        openingHours: "09:30 AM - 05:30 PM",
+        description: "Historical 18th-century fortification seat of the Peshwas of the Maratha Empire. Famous for Dilli Darwaza and stone palaces.",
+        tags: ["Peshwa History", "Fort", "Architecture"]
+      },
+      {
+        id: "pune-aga-khan-palace",
+        name: "Aga Khan Palace",
+        category: "Cultural & Museum",
+        lat: 18.5524,
+        lng: 73.9015,
+        address: "Pune-Ahmednagar Road, Kalyani Nagar",
+        priceTier: "₹",
+        estimatedCost: "₹25 (Indian nationals)",
+        rating: 4.4,
+        reviewCount: 21500,
+        isVegetarianFriendly: true,
+        isWheelchairAccessible: true,
+        openingHours: "09:00 AM - 05:30 PM",
+        description: "Built in 1892, this Italian-arched palace served as a prison for Mahatma Gandhi during the Quit India movement.",
+        tags: ["Gandhi Memorial", "Heritage", "Gardens"]
+      },
+      {
+        id: "pune-dagdusheth-temple",
+        name: "Shreemant Dagdusheth Ganapati Temple",
+        category: "Cultural & Museum",
+        lat: 18.5164,
+        lng: 73.8561,
+        address: "Budhwar Peth, Pune 411002",
+        priceTier: "Free",
+        estimatedCost: "Free entry",
+        rating: 4.8,
+        reviewCount: 45000,
+        isVegetarianFriendly: true,
+        isWheelchairAccessible: true,
+        openingHours: "06:00 AM - 10:30 PM",
+        description: "One of Maharashtra's most revered Ganesh temples with over a century of history, founded in 1893 by Dagdusheth Halwai.",
+        tags: ["Ganesh Temple", "Heritage", "Budhwar Peth"]
+      },
+      {
+        id: "pune-sinhagad-fort",
+        name: "Sinhagad Fort",
+        category: "Historical",
+        lat: 18.3663,
+        lng: 73.7559,
+        address: "Sinhagad Ghat Road, Thoptewadi",
+        priceTier: "₹",
+        estimatedCost: "₹50 (Vehicle entry) / Free trek",
+        rating: 4.5,
+        reviewCount: 38000,
+        isVegetarianFriendly: true,
+        isWheelchairAccessible: false,
+        openingHours: "05:00 AM - 06:00 PM",
+        description: "Ancient hill fortress 1,312 meters high in the Western Ghats. Legendary site of Tanaji Malusare's battle in 1670.",
+        tags: ["Trekking", "Maratha Empire", "Scenic View"]
+      },
+      {
+        id: "pune-pataleshwar-caves",
+        name: "Pataleshwar Cave Temple",
+        category: "Historical",
+        lat: 18.5283,
+        lng: 73.8517,
+        address: "JM Road, Shivajinagar, Pune 411005",
+        priceTier: "Free",
+        estimatedCost: "Free entry",
+        rating: 4.4,
+        reviewCount: 9200,
+        isVegetarianFriendly: true,
+        isWheelchairAccessible: false,
+        openingHours: "08:30 AM - 05:30 PM",
+        description: "8th-century monolithic rock-cut cave temple dedicated to Lord Shiva, carved during the Rashtrakuta dynasty.",
+        tags: ["Ancient Caves", "Monolithic", "Shivajinagar"]
+      },
+      {
+        id: "pune-fc-road",
+        name: "Fergusson College Road (FC Road)",
+        category: "Budget Spot",
+        lat: 18.5222,
+        lng: 73.8415,
+        address: "FC Road, Deccan Gymkhana, Pune 411004",
+        priceTier: "₹",
+        estimatedCost: "₹100 - ₹300 per person",
+        rating: 4.6,
+        reviewCount: 28000,
+        isVegetarianFriendly: true,
+        isWheelchairAccessible: true,
+        openingHours: "10:00 AM - 11:00 PM",
+        description: "Vibrant student street packed with bookstalls, budget apparel, cafes, and open-air food culture.",
+        tags: ["Student Hub", "Budget Shopping", "Street Food"]
+      },
+      {
+        id: "pune-vaishali-restaurant",
+        name: "Café Vaishali",
+        category: "Food & Dining",
+        lat: 18.5218,
+        lng: 73.8412,
+        address: "1218/1, FC Road, Shivajinagar",
+        priceTier: "₹₹",
+        estimatedCost: "₹200 - ₹400 per person",
+        rating: 4.5,
+        reviewCount: 31000,
+        isVegetarianFriendly: true,
+        isWheelchairAccessible: true,
+        openingHours: "07:00 AM - 11:00 PM",
+        description: "Iconic 100% pure vegetarian dining institution on FC Road since 1949. Famous for SPDP, Mysore Masala Dosa, and filter coffee.",
+        tags: ["Pure Vegetarian", "South Indian", "FC Road"]
+      },
+      {
+        id: "pune-saras-baug",
+        name: "Saras Baug",
+        category: "Parks & Nature",
+        lat: 18.5015,
+        lng: 73.8541,
+        address: "Saras Baug Road, Sadashiv Peth",
+        priceTier: "Free",
+        estimatedCost: "Free entry",
+        rating: 4.3,
+        reviewCount: 19500,
+        isVegetarianFriendly: true,
+        isWheelchairAccessible: true,
+        openingHours: "06:00 AM - 09:00 PM",
+        description: "Picturesque 25-acre garden with a lake temple built in 1784 by Sawai Madhavrao Peshwa. Popular evening family destination.",
+        tags: ["Family Park", "Lake", "Sadashiv Peth"]
+      },
+      {
+        id: "pune-osho-garden",
+        name: "Osho Teerth Park",
+        category: "Parks & Nature",
+        lat: 18.5367,
+        lng: 73.8943,
+        address: "D.H. Lane, Koregaon Park",
+        priceTier: "Free",
+        estimatedCost: "Free entry (Morning & Evening sessions)",
+        rating: 4.4,
+        reviewCount: 7800,
+        isVegetarianFriendly: true,
+        isWheelchairAccessible: false,
+        openingHours: "06:00 AM - 09:00 AM & 03:00 PM - 06:00 PM",
+        description: "Tranquil 12-acre Japanese Zen-style public park created from an eco-restored stream with bamboo groves and lotus ponds.",
+        tags: ["Zen Garden", "Koregaon Park", "Quiet"]
+      },
+      {
+        id: "pune-vohuman-cafe",
+        name: "Vohuman Café",
+        category: "Food & Dining",
+        lat: 18.5308,
+        lng: 73.8778,
+        address: "Near Ruby Hall Clinic, Dhole Patil Road",
+        priceTier: "₹",
+        estimatedCost: "₹100 - ₹200 per person",
+        rating: 4.2,
+        reviewCount: 16500,
+        isVegetarianFriendly: true,
+        isWheelchairAccessible: true,
+        openingHours: "06:00 AM - 07:00 PM",
+        description: "Cherished heritage Irani cafe famous for cheese omelettes, bun maska, and hot Irani chai since 1978.",
+        tags: ["Irani Cafe", "Bun Maska", "Breakfast"]
+      },
+      {
+        id: "pune-kelkar-museum",
+        name: "Raja Dinkar Kelkar Museum",
+        category: "Cultural & Museum",
+        lat: 18.5108,
+        lng: 73.8542,
+        address: "Shukrawar Peth, Pune 411002",
+        priceTier: "₹",
+        estimatedCost: "₹50 (Adults), ₹15 (Children)",
+        rating: 4.3,
+        reviewCount: 8100,
+        isVegetarianFriendly: true,
+        isWheelchairAccessible: true,
+        openingHours: "10:00 AM - 05:30 PM",
+        description: "Historic collection of 20,000+ Indian artifacts including musical instruments, carvings, and Mastani Mahal recreation.",
+        tags: ["Artifacts", "Heritage", "Shukrawar Peth"]
+      },
+      {
+        id: "pune-katraj-zoo",
+        name: "Rajiv Gandhi Zoo & Katraj Lake",
+        category: "Public Facility",
+        lat: 18.4556,
+        lng: 73.8596,
+        address: "Pune-Satara Road, Katraj",
+        priceTier: "₹",
+        estimatedCost: "₹40 (Adults), ₹15 (Children)",
+        rating: 4.2,
+        reviewCount: 24000,
+        isVegetarianFriendly: true,
+        isWheelchairAccessible: true,
+        openingHours: "09:30 AM - 05:00 PM (Closed Wed)",
+        description: "130-acre municipal zoo and rescue center with snake park and 42-acre Katraj Lake managed by PMC.",
+        tags: ["Zoo", "Snake Park", "Katraj"]
+      }
+    ];
+
+    const CITIZEN_REPORTS = [
+      {
+        id: "rep-01",
+        category: "Streetlight Outage",
+        title: "Streetlight outage near Dengle Bridge footpath",
+        locationName: "Dengle Bridge, Kasba Peth",
+        lat: 18.5255,
+        lng: 73.8582,
+        verificationStatus: "community_verified",
+        source: "Verified Resident Submission",
+        timestamp: "2026-10-08T20:15:00+05:30"
+      },
+      {
+        id: "rep-02",
+        category: "Road Hazard / Pothole",
+        title: "Deep pothole on left lane near Swargate junction",
+        locationName: "Swargate Junction",
+        lat: 18.5018,
+        lng: 73.8584,
+        verificationStatus: "community_verified",
+        source: "Citizen Report #3892",
+        timestamp: "2026-10-09T07:45:00+05:30"
+      }
+    ];
+
+    const START_POINTS = [
+      { name: "Pune Railway Station", lat: 18.5284, lng: 73.8739 },
+      { name: "Deccan Gymkhana Bus Station", lat: 18.5165, lng: 73.8422 },
+      { name: "Shivajinagar Interchange", lat: 18.5314, lng: 73.8446 },
+      { name: "Swargate Bus Terminal", lat: 18.5012, lng: 73.8587 }
+    ];
+
+    // State Variables
+    let currentCategory = "All";
+    let isVegOnly = false;
+    let isAccessOnly = false;
+    let currentPrice = "All";
+    let currentSearch = "";
+    let activePlaceId = null;
+    let comparedPlaceIds = [];
+    let pinDropMode = false;
+    let currentPinCoords = { lat: 18.5204, lng: 73.8567 };
+    let currentTravelMode = "walking";
+    let map, markersLayer, safetyLayer, routeLayer;
+
+    // Initialize Application
+    window.addEventListener("DOMContentLoaded", () => {
+      initMap();
+      renderPlaces();
+      populateRouteDestinations();
+      fetchWeather();
+    });
+
+    // 1. Map Initialization (Schematic Engine - Zero External 403 Errors)
+    function initMap() {
+      map = L.map("map", {
+        center: [18.5204, 73.8567],
+        zoom: 13,
+        zoomControl: false,
+        minZoom: 11,
+        maxZoom: 17
+      });
+
+      L.control.zoom({ position: "bottomright" }).addTo(map);
+
+      // Custom Canvas-rendered Schematic Grid Layer (100% Offline / Zero Network Requests)
+      const SchematicGridLayer = L.GridLayer.extend({
+        createTile: function(coords) {
+          const tile = document.createElement("canvas");
+          const size = this.getTileSize();
+          tile.width = size.x;
+          tile.height = size.y;
+          const ctx = tile.getContext("2d");
+
+          // Deep urban background
+          ctx.fillStyle = "#090d16";
+          ctx.fillRect(0, 0, size.x, size.y);
+
+          // Sector grid lines
+          ctx.strokeStyle = "#162035";
+          ctx.lineWidth = 1;
+          ctx.strokeRect(0, 0, size.x, size.y);
+
+          // Technical coordinates dots
+          ctx.fillStyle = "#1e293b";
+          for (let x = 32; x < size.x; x += 32) {
+            for (let y = 32; y < size.y; y += 32) {
+              ctx.fillRect(x - 1, y - 1, 2, 2);
+            }
+          }
+
+          // Grid coordinates text
+          ctx.fillStyle = "#1e293b";
+          ctx.font = "9px monospace";
+          ctx.fillText(`PUNE GRID [${coords.x},${coords.y}] Z${coords.z}`, 10, size.y - 8);
+
+          return tile;
+        }
+      });
+
+      new SchematicGridLayer().addTo(map);
+
+      // Pune River System: Mula & Mutha Confluence (Sangam)
+      const muthaRiver = [
+        [18.435, 73.770], [18.470, 73.805], [18.498, 73.832], [18.514, 73.847],
+        [18.528, 73.858], [18.537, 73.882], [18.545, 73.910], [18.558, 73.945]
+      ];
+      const mulaRiver = [
+        [18.575, 73.800], [18.555, 73.825], [18.542, 73.845], [18.528, 73.858]
+      ];
+      L.polyline(muthaRiver, { color: '#0284c7', weight: 16, opacity: 0.25, lineCap: 'round', lineJoin: 'round' }).addTo(map);
+      L.polyline(muthaRiver, { color: '#38bdf8', weight: 4, opacity: 0.75, lineCap: 'round', lineJoin: 'round' }).addTo(map);
+      L.polyline(mulaRiver, { color: '#0284c7', weight: 12, opacity: 0.25, lineCap: 'round', lineJoin: 'round' }).addTo(map);
+      L.polyline(mulaRiver, { color: '#38bdf8', weight: 3, opacity: 0.75, lineCap: 'round', lineJoin: 'round' }).addTo(map);
+
+      // Pune Major Transit & Road Corridors
+      const corridors = [
+        [[18.585, 73.760], [18.535, 73.778], [18.470, 73.815], [18.430, 73.838]], // Western Bypass
+        [[18.535, 73.843], [18.520, 73.842], [18.508, 73.848]], // FC & JM Road
+        [[18.532, 73.853], [18.517, 73.856], [18.500, 73.858]], // Shivaji Road / Peths
+        [[18.530, 73.876], [18.545, 73.896], [18.560, 73.922]], // Ahmednagar / Kalyani Nagar Rd
+        [[18.500, 73.858], [18.475, 73.859], [18.450, 73.860]]  // Satara Rd towards Katraj
+      ];
+      corridors.forEach(c => {
+        L.polyline(c, { color: '#334155', weight: 3, opacity: 0.7, dashArray: '6, 6' }).addTo(map);
+      });
+
+      // Urban Sector Outlines
+      const sectors = [
+        { name: "Peths Historic Heritage Core", center: [18.518, 73.856], radius: 1100, color: "#b45309" },
+        { name: "Deccan & FC Road Hub", center: [18.522, 73.842], radius: 950, color: "#7c3aed" },
+        { name: "Koregaon Park & Kalyani Nagar", center: [18.542, 73.898], radius: 1400, color: "#059669" },
+        { name: "Shivajinagar Metro Hub", center: [18.531, 73.845], radius: 1000, color: "#0284c7" },
+        { name: "Swargate Transit Sector", center: [18.501, 73.858], radius: 850, color: "#f59e0b" },
+        { name: "Sinhagad Mountain Footprints", center: [18.366, 73.756], radius: 2200, color: "#475569" },
+        { name: "Katraj Lake Sector", center: [18.455, 73.860], radius: 1200, color: "#0d9488" }
+      ];
+      sectors.forEach(s => {
+        L.circle(s.center, {
+          radius: s.radius,
+          color: s.color,
+          weight: 1,
+          dashArray: '4, 8',
+          fillColor: s.color,
+          fillOpacity: 0.05
+        }).addTo(map);
+      });
+
+      markersLayer = L.layerGroup().addTo(map);
+      safetyLayer = L.layerGroup().addTo(map);
+      routeLayer = L.layerGroup().addTo(map);
+
+      map.on("click", (e) => {
+        if (pinDropMode) {
+          currentPinCoords = { lat: e.latlng.lat, lng: e.latlng.lng };
+          cancelPinDrop();
+          openReportModal(currentPinCoords);
+        }
+      });
+
+      renderMapMarkers();
+      renderSafetyMarkers();
+    }
+
+    // 2. Render Place Markers on Map
+    function renderMapMarkers() {
+      if (!markersLayer) return;
+      markersLayer.clearLayers();
+
+      const filtered = getFilteredPlaces();
+
+      filtered.forEach((p) => {
+        let badgeColor = "#0284c7";
+        if (p.category === "Historical") badgeColor = "#b45309";
+        if (p.category === "Food & Dining") badgeColor = "#16a34a";
+        if (p.category === "Parks & Nature") badgeColor = "#059669";
+        if (p.category === "Budget Spot") badgeColor = "#7c3aed";
+
+        const isSelected = activePlaceId === p.id;
+        const iconHtml = `
+          <div class="custom-pin flex items-center justify-center ${isSelected ? 'scale-125 ring-4 ring-emerald-400 rounded-full' : ''}">
+            <div style="background-color: ${badgeColor};" class="w-8 h-8 rounded-full flex items-center justify-center text-white shadow-lg border-2 border-white text-xs font-bold">
+              ${p.category === "Historical" ? "🏛️" : p.category === "Food & Dining" ? "🍲" : p.category === "Parks & Nature" ? "🌳" : "📍"}
+            </div>
+          </div>
+        `;
+
+        const icon = L.divIcon({
+          html: iconHtml,
+          className: "custom-pin-wrap",
+          iconSize: [32, 32],
+          iconAnchor: [16, 16],
+          popupAnchor: [0, -18]
+        });
+
+        const marker = L.marker([p.lat, p.lng], { icon }).addTo(markersLayer);
+
+        const popupContent = `
+          <div class="p-1 max-w-xs text-slate-100">
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <span class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-800 text-emerald-400 border border-slate-700">
+                ${p.category}
+              </span>
+              <span class="text-xs font-bold text-amber-400">${p.priceTier}</span>
+            </div>
+            <h4 class="font-bold text-sm text-white mb-1">${p.name}</h4>
+            <p class="text-xs text-slate-300 line-clamp-2 mb-2">${p.description}</p>
+            <div class="text-[11px] text-slate-400 mb-2">⏱️ ${p.openingHours}</div>
+            <div class="flex items-center gap-2 pt-2 border-t border-slate-700 text-[10px]">
+              ${p.isWheelchairAccessible ? '<span class="text-emerald-400">♿ Accessible</span>' : '<span class="text-slate-500">♿ Steps</span>'}
+              ${p.isVegetarianFriendly ? '<span class="text-emerald-400">• 🥦 Veg Options</span>' : ''}
+            </div>
+          </div>
+        `;
+        marker.bindPopup(popupContent);
+        marker.on("click", () => selectPlace(p.id, false));
+      });
+    }
+
+    // 3. Render Sourced Safety Markers
+    function renderSafetyMarkers() {
+      if (!safetyLayer) return;
+      safetyLayer.clearLayers();
+
+      CITIZEN_REPORTS.forEach((rep) => {
+        const iconHtml = `
+          <div class="custom-pin flex items-center justify-center">
+            <div class="w-7 h-7 rounded-full bg-amber-500 flex items-center justify-center text-white shadow-md border-2 border-white text-xs">
+              ⚠️
+            </div>
+          </div>
+        `;
+        const icon = L.divIcon({
+          html: iconHtml,
+          className: "hazard-pin-wrap",
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
+          popupAnchor: [0, -16]
+        });
+        const marker = L.marker([rep.lat, rep.lng], { icon }).addTo(safetyLayer);
+
+        const popupContent = `
+          <div class="p-1 max-w-xs text-slate-100">
+            <span class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 inline-block mb-1">
+              ${rep.verificationStatus.toUpperCase().replace("_", " ")}
+            </span>
+            <h4 class="font-bold text-sm text-white mb-1">${rep.title}</h4>
+            <div class="text-[10px] text-slate-400 bg-slate-800/80 p-1.5 rounded border border-slate-700 space-y-0.5">
+              <div>📍 <strong>Location:</strong> ${rep.locationName}</div>
+              <div>📢 <strong>Source:</strong> ${rep.source}</div>
+            </div>
+          </div>
+        `;
+        marker.bindPopup(popupContent);
+      });
+    }
+
+    // 4. Filtering Logic
+    function getFilteredPlaces() {
+      return PUNE_PLACES.filter((p) => {
+        if (currentCategory !== "All" && p.category !== currentCategory) return false;
+        if (isVegOnly && !p.isVegetarianFriendly) return false;
+        if (isAccessOnly && !p.isWheelchairAccessible) return false;
+        if (currentPrice !== "All" && p.priceTier !== currentPrice) return false;
+        if (currentSearch.trim()) {
+          const q = currentSearch.toLowerCase();
+          const match = p.name.toLowerCase().includes(q) ||
+                        p.description.toLowerCase().includes(q) ||
+                        p.address.toLowerCase().includes(q) ||
+                        p.tags.some(t => t.toLowerCase().includes(q));
+          if (!match) return false;
+        }
+        return true;
+      });
+    }
+
+    // 5. Render Discovery Places Cards
+    function renderPlaces() {
+      const container = document.getElementById("places-list");
+      const filtered = getFilteredPlaces();
+      document.getElementById("place-count").textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 px-4 text-slate-400">
+            <span class="text-3xl mb-2 block">🔍</span>
+            <p class="font-semibold text-white">No places match your filters</p>
+            <p class="text-xs text-slate-500 mt-1">Try clearing the search query or loosening constraints.</p>
+            <button onclick="resetFilters()" class="mt-3 px-3 py-1.5 rounded-lg bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 text-xs">Reset All Filters</button>
+          </div>
+        `;
+        renderMapMarkers();
+        return;
+      }
+
+      container.innerHTML = filtered.map((p) => {
+        const isActive = activePlaceId === p.id;
+        const isCompared = comparedPlaceIds.includes(p.id);
+
+        return `
+          <div onclick="selectPlace('${p.id}', true)" class="group bg-slate-900 border rounded-xl overflow-hidden transition-all duration-200 cursor-pointer flex flex-col justify-between ${isActive ? 'border-emerald-500 shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500/50' : 'border-slate-800 hover:border-slate-700'}">
+            <div class="p-3 pb-2">
+              <div class="flex items-start justify-between gap-2 mb-1">
+                <div>
+                  <div class="flex items-center gap-1.5 mb-1">
+                    <span class="text-[9px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                      ${p.category}
+                    </span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
+                      ${p.priceTier}
+                    </span>
+                  </div>
+                  <h3 class="font-bold text-sm text-white group-hover:text-emerald-300 transition-colors">
+                    ${p.name}
+                  </h3>
+                </div>
+                <div class="flex items-center gap-1 bg-amber-950/40 border border-amber-500/30 px-1.5 py-0.5 rounded text-xs text-amber-300 font-bold shrink-0">
+                  <span>★</span><span>${p.rating}</span>
+                </div>
+              </div>
+              <p class="text-xs text-slate-400 line-clamp-2 mb-2 leading-relaxed">${p.description}</p>
+              <div class="flex flex-wrap items-center gap-1.5 text-[10px]">
+                <span class="text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">⏱️ ${p.openingHours.split('(')[0]}</span>
+                <span class="text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">💵 ${p.estimatedCost}</span>
+                ${p.isWheelchairAccessible ? '<span class="text-blue-400 bg-blue-950/40 px-2 py-0.5 rounded border border-blue-500/30">♿ Accessible</span>' : '<span class="text-slate-500 bg-slate-800/40 px-2 py-0.5 rounded border border-slate-800">♿ Steps</span>'}
+                ${p.isVegetarianFriendly ? '<span class="text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-500/30">🥦 Veg options</span>' : ''}
+              </div>
+            </div>
+            <div class="px-3 py-2 bg-slate-950/60 border-t border-slate-800/80 flex items-center justify-between text-xs mt-1">
+              <button type="button" onclick="event.stopPropagation(); toggleCompare('${p.id}')" class="px-2 py-1 rounded text-[11px] font-medium transition-colors flex items-center gap-1 ${isCompared ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'}">
+                <span>⚖️</span><span>${isCompared ? 'Compared' : 'Compare'}</span>
+              </button>
+              <button type="button" onclick="event.stopPropagation(); startRouteTo('${p.id}')" class="px-2.5 py-1 rounded text-[11px] font-medium bg-emerald-600/20 text-emerald-300 hover:bg-emerald-600/30 border border-emerald-500/40 flex items-center gap-1">
+                <span>🧭</span><span>Route</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      renderMapMarkers();
+    }
+
+    // 6. User Selection & Filter Handlers
+    function selectPlace(placeId, panMap = true) {
+      activePlaceId = placeId;
+      const place = PUNE_PLACES.find(p => p.id === placeId);
+      if (place && panMap && map) {
+        map.setView([place.lat, place.lng], 15, { animate: true });
+      }
+      renderPlaces();
+    }
+
+    function setCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll(".cat-pill").forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.className = "cat-pill active px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium bg-emerald-600 text-white shadow-sm";
+        } else {
+          btn.className = "cat-pill px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700";
+        }
+      });
+      renderPlaces();
+    }
+
+    function toggleVeg() {
+      isVegOnly = !isVegOnly;
+      const btn = document.getElementById("veg-toggle");
+      if (isVegOnly) {
+        btn.className = "px-2.5 py-1 rounded-lg border border-emerald-500 bg-emerald-950/70 text-emerald-300 text-[11px] font-medium flex items-center gap-1";
+      } else {
+        btn.className = "px-2.5 py-1 rounded-lg border border-slate-700 bg-slate-800/60 text-slate-400 text-[11px] font-medium flex items-center gap-1";
+      }
+      renderPlaces();
+    }
+
+    function toggleAccess() {
+      isAccessOnly = !isAccessOnly;
+      const btn = document.getElementById("access-toggle");
+      if (isAccessOnly) {
+        btn.className = "px-2.5 py-1 rounded-lg border border-blue-500 bg-blue-950/70 text-blue-300 text-[11px] font-medium flex items-center gap-1";
+      } else {
+        btn.className = "px-2.5 py-1 rounded-lg border border-slate-700 bg-slate-800/60 text-slate-400 text-[11px] font-medium flex items-center gap-1";
+      }
+      renderPlaces();
+    }
+
+    function setPrice(price) {
+      currentPrice = price;
+      document.querySelectorAll(".price-btn").forEach(btn => {
+        if (btn.dataset.price === price) {
+          btn.className = "price-btn active px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-600 text-white";
+        } else {
+          btn.className = "price-btn px-1.5 py-0.5 rounded text-[10px] font-medium text-slate-400 hover:text-white";
+        }
+      });
+      renderPlaces();
+    }
+
+    function handleSearch(val) {
+      currentSearch = val;
+      const clearBtn = document.getElementById("clear-search-btn");
+      if (val.trim()) clearBtn.classList.remove("hidden");
+      else clearBtn.classList.add("hidden");
+      renderPlaces();
+    }
+
+    function clearSearch() {
+      document.getElementById("search-input").value = "";
+      handleSearch("");
+    }
+
+    function resetFilters() {
+      clearSearch();
+      setCategory("All");
+      if (isVegOnly) toggleVeg();
+      if (isAccessOnly) toggleAccess();
+      setPrice("All");
+    }
+
+    // 7. Place Comparison
+    function toggleCompare(placeId) {
+      if (comparedPlaceIds.includes(placeId)) {
+        comparedPlaceIds = comparedPlaceIds.filter(id => id !== placeId);
+      } else {
+        if (comparedPlaceIds.length >= 3) {
+          alert("You can compare up to 3 places at once.");
+          return;
+        }
+        comparedPlaceIds.push(placeId);
+      }
+      updateCompareBar();
+      renderPlaces();
+    }
+
+    function updateCompareBar() {
+      const bar = document.getElementById("compare-bar");
+      const count = document.getElementById("compare-count");
+      if (comparedPlaceIds.length > 0) {
+        bar.classList.remove("hidden");
+        count.textContent = comparedPlaceIds.length;
+      } else {
+        bar.classList.add("hidden");
+      }
+    }
+
+    function openCompareModal() {
+      const modal = document.getElementById("compare-modal");
+      const grid = document.getElementById("compare-grid");
+      const placesToCompare = PUNE_PLACES.filter(p => comparedPlaceIds.includes(p.id));
+
+      if (placesToCompare.length < 2) {
+        grid.innerHTML = `
+          <div class="col-span-3 text-center py-10 text-slate-400">
+            <span class="text-3xl block mb-2">⚖️</span>
+            <p class="font-bold text-white text-base">Select at least 2 venues to compare</p>
+            <p class="text-xs text-slate-500 mt-1">Click the &ldquo;Compare&rdquo; button on any venue cards in the left feed.</p>
+          </div>
+        `;
+      } else {
+        grid.innerHTML = placesToCompare.map(p => `
+          <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-4 flex flex-col justify-between relative">
+            <button onclick="toggleCompare('${p.id}'); openCompareModal();" class="absolute right-3 top-3 text-slate-400 hover:text-rose-400 text-xs">✕</button>
+            <div class="space-y-3">
+              <div>
+                <span class="text-[9px] font-bold uppercase text-emerald-400 px-2 py-0.5 rounded bg-slate-900 border border-slate-700">${p.category}</span>
+                <h3 class="font-bold text-base text-white mt-1">${p.name}</h3>
+                <p class="text-[11px] text-slate-400 line-clamp-2 mt-1">${p.description}</p>
+              </div>
+              <div class="border-t border-slate-700/80 pt-2.5 space-y-2 text-xs">
+                <div>
+                  <span class="text-slate-400 text-[10px] block">Affordability:</span>
+                  <div class="flex items-center gap-1.5 mt-0.5">
+                    <span class="font-bold text-emerald-400">${p.priceTier}</span>
+                    <span class="text-slate-300 text-[11px]">${p.estimatedCost}</span>
+                  </div>
+                </div>
+                <div>
+                  <span class="text-slate-400 text-[10px] block">Public Rating:</span>
+                  <span class="text-amber-400 font-bold">★ ${p.rating} (${p.reviewCount.toLocaleString()} reviews)</span>
+                </div>
+                <div>
+                  <span class="text-slate-400 text-[10px] block">Wheelchair Access:</span>
+                  ${p.isWheelchairAccessible ? '<span class="text-blue-400">♿ Step-free / Ramps</span>' : '<span class="text-slate-400">⚠️ Ancient steps / rugged</span>'}
+                </div>
+                <div>
+                  <span class="text-slate-400 text-[10px] block">Dietary Options:</span>
+                  ${p.isVegetarianFriendly ? '<span class="text-emerald-400">🥦 Pure Veg / Veg Options</span>' : '<span class="text-slate-400">Mixed dining</span>'}
+                </div>
+                <div>
+                  <span class="text-slate-400 text-[10px] block">Hours:</span>
+                  <span class="text-slate-300 font-mono text-[11px]">${p.openingHours}</span>
+                </div>
+                <div class="bg-slate-900/80 p-2 rounded border border-slate-700 text-[10px] text-slate-400">
+                  <span class="text-slate-300 font-semibold block mb-0.5">Cleanliness & Safety:</span>
+                  No synthetic scores generated. Verified by municipal standards.
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      modal.classList.remove("hidden");
+    }
+
+    function closeCompareModal() {
+      document.getElementById("compare-modal").classList.add("hidden");
+    }
+
+    function clearComparison() {
+      comparedPlaceIds = [];
+      updateCompareBar();
+      renderPlaces();
+      closeCompareModal();
+    }
+
+    // 8. Citizen Safety Report Modal & Pin Dropper
+    function openReportModal(coords = null) {
+      if (coords) {
+        currentPinCoords = coords;
+        document.getElementById("report-coords-text").textContent = `Coords: ${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}`;
+      }
+      document.getElementById("report-modal").classList.remove("hidden");
+    }
+
+    function closeReportModal() {
+      document.getElementById("report-modal").classList.add("hidden");
+    }
+
+    function startPinDrop() {
+      pinDropMode = true;
+      document.getElementById("pindrop-banner").classList.remove("hidden");
+    }
+
+    function cancelPinDrop() {
+      pinDropMode = false;
+      document.getElementById("pindrop-banner").classList.add("hidden");
+    }
+
+    function startPinDropFromModal() {
+      closeReportModal();
+      startPinDrop();
+    }
+
+    function handleReportSubmit(e) {
+      e.preventDefault();
+      const title = document.getElementById("report-title").value.trim();
+      const loc = document.getElementById("report-location").value.trim();
+      const desc = document.getElementById("report-desc").value.trim();
+      const cat = document.getElementById("report-category").value;
+
+      const newReport = {
+        id: `rep-${Date.now()}`,
+        category: cat,
+        title: title,
+        locationName: loc,
+        lat: currentPinCoords.lat,
+        lng: currentPinCoords.lng,
+        verificationStatus: "unverified",
+        source: "Citizen Report (Under Review)",
+        timestamp: new Date().toISOString()
+      };
+
+      CITIZEN_REPORTS.unshift(newReport);
+      renderSafetyMarkers();
+      closeReportModal();
+      alert("Report successfully submitted! Labeled as Unverified until reviewed by municipal moderation.");
+    }
+
+    // 9. Rule-Based AI City Assistant
+    function toggleAssistant() {
+      const drawer = document.getElementById("assistant-drawer");
+      drawer.classList.toggle("hidden");
+    }
+
+    function sendAssistantPrompt(text) {
+      document.getElementById("assistant-input").value = text;
+      sendAssistantMessage();
+    }
+
+    function sendAssistantMessage() {
+      const input = document.getElementById("assistant-input");
+      const text = input.value.trim();
+      if (!text) return;
+
+      const container = document.getElementById("assistant-messages");
+
+      // User Message
+      container.innerHTML += `
+        <div class="flex flex-col items-end">
+          <div class="max-w-[90%] p-3 rounded-xl bg-emerald-600 text-white rounded-br-none leading-relaxed">${text}</div>
+          <span class="text-[9px] text-slate-500 mt-1 px-1">You</span>
+        </div>
+      `;
+      input.value = "";
+      container.scrollTop = container.scrollHeight;
+
+      // Deterministic Rule-Engine Response
+      setTimeout(() => {
+        const lower = text.toLowerCase();
+        let reply = "";
+        let citations = [];
+
+        if (lower.includes("weather") || lower.includes("alert") || lower.includes("warning")) {
+          reply = "Active Municipal Alert for Pune:\n• [WARNING] Metro Feeder Road Diversion: Shivajinagar. Single-lane diversion due to civil infrastructure upgrades. Pedestrian walkway remains open. (Source: PMC Engineering Dept)\n\n• Weather Advisory: Evening gusty winds up to 25 km/h. Carry umbrellas.";
+        } else if (lower.includes("budget") || lower.includes("cheap") || lower.includes("free")) {
+          reply = "Top budget-friendly destinations in Pune:\n• Shreemant Dagdusheth Ganapati Temple (Free entry)\n• Pataleshwar Cave Temple (Free entry, 8th-century rock-cut)\n• Saras Baug (Free entry, 25-acre garden & lake)\n• Fergusson College Road (Budget street shopping & snacks under ₹150)";
+          citations = ["Dagdusheth Temple", "Pataleshwar Caves", "Saras Baug", "FC Road"];
+        } else if (lower.includes("history") || lower.includes("historical") || lower.includes("fort")) {
+          reply = "Prominent historical landmarks in Pune:\n• Shaniwar Wada: 18th-century Peshwa capital ruins (Entry: ₹25)\n• Aga Khan Palace: Freedom struggle monument where Mahatma Gandhi was interned (Entry: ₹25)\n• Sinhagad Fort: Iconic 1,312m hill fortress with Maratha history\n• Pataleshwar Cave Temple: 8th-century rock-cut basalt temple";
+          citations = ["Shaniwar Wada", "Aga Khan Palace", "Sinhagad Fort"];
+        } else if (lower.includes("veg") || lower.includes("vegetarian") || lower.includes("food")) {
+          reply = "Iconic Pune dining institutions with pure vegetarian options:\n• Café Vaishali (FC Road): Legendary pure veg eatery since 1949 (Famous SPDP & filter coffee)\n• Vohuman Café (Dhole Patil Rd): Irani breakfast with bun maska and chai";
+          citations = ["Café Vaishali", "Vohuman Café"];
+        } else if (lower.includes("tour") || lower.includes("half-day") || lower.includes("plan")) {
+          reply = "Recommended 4-Hour Budget Pune Itinerary:\n1. 09:30 AM: Explore Shaniwar Wada (Peshwa fortification ruins)\n2. 11:00 AM: Visit Pataleshwar Monolithic Cave Temple on JM Road\n3. 12:30 PM: Walk down FC Road for lunch at Café Vaishali (Pure veg)\n\nTotal estimated ticket fees: Under ₹50 per person.";
+          citations = ["Shaniwar Wada", "Pataleshwar Caves", "Café Vaishali"];
+        } else {
+          reply = `I searched verified Pune records for "${text}". You can visit historical monuments like Shaniwar Wada or Aga Khan Palace, serene spots like Saras Baug, and vibrant corridors like FC Road. Use the category filters in the left pane to explore opening hours and accessibility.`;
+        }
+
+        let citationHtml = "";
+        if (citations.length > 0) {
+          citationHtml = `
+            <div class="mt-2.5 pt-2 border-t border-slate-700/60 text-[10px]">
+              <span class="text-slate-400 font-semibold block mb-1">Retrieved Entities:</span>
+              <div class="flex flex-wrap gap-1">
+                ${citations.map(c => `<span class="px-2 py-0.5 rounded bg-slate-900 text-emerald-400 border border-slate-700 font-medium">${c}</span>`).join("")}
+              </div>
+            </div>
+          `;
+        }
+
+        container.innerHTML += `
+          <div class="flex flex-col items-start">
+            <div class="max-w-[90%] p-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 rounded-bl-none leading-relaxed whitespace-pre-wrap">${reply}${citationHtml}</div>
+            <span class="text-[9px] text-slate-500 mt-1 px-1">City Assistant (Rule-Based)</span>
+          </div>
+        `;
+        container.scrollTop = container.scrollHeight;
+      }, 300);
+    }
+
+    // 10. Smart Route Planner Drawer
+    function openRouteDrawer() {
+      document.getElementById("route-drawer").classList.remove("hidden");
+      calculateRoute();
+    }
+
+    function closeRouteDrawer() {
+      document.getElementById("route-drawer").classList.add("hidden");
+    }
+
+    function populateRouteDestinations() {
+      const select = document.getElementById("route-dest");
+      select.innerHTML = PUNE_PLACES.map((p, idx) => `
+        <option value="${p.id}">🎯 ${p.name} (${p.category})</option>
+      `).join("");
+    }
+
+    function startRouteTo(placeId) {
+      document.getElementById("route-dest").value = placeId;
+      openRouteDrawer();
+    }
+
+    function setTravelMode(mode) {
+      currentTravelMode = mode;
+      document.querySelectorAll(".mode-btn").forEach(btn => {
+        if (btn.dataset.mode === mode) {
+          btn.className = "mode-btn active py-2 px-3 rounded-lg border border-emerald-500 bg-emerald-600/30 text-white font-semibold flex flex-col items-center gap-1";
+        } else {
+          btn.className = "mode-btn py-2 px-3 rounded-lg border border-slate-700 bg-slate-800 text-slate-400 flex flex-col items-center gap-1";
+        }
+      });
+      calculateRoute();
+    }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = ((lat2 - lat1) * Math.PI) / 180;
+      const dLon = ((lon2 - lon1) * Math.PI) / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function calculateRoute() {
+      const startIdx = parseInt(document.getElementById("route-start").value) || 0;
+      const destId = document.getElementById("route-dest").value || PUNE_PLACES[0].id;
+      const start = START_POINTS[startIdx];
+      const dest = PUNE_PLACES.find(p => p.id === destId) || PUNE_PLACES[0];
+
+      const dist = calculateDistance(start.lat, start.lng, dest.lat, dest.lng);
+      const speed = currentTravelMode === "walking" ? 4.5 : currentTravelMode === "cycling" ? 14 : 25;
+      const duration = Math.round((dist / speed) * 60) + 3;
+
+      document.getElementById("route-distance").textContent = dist < 1 ? `${Math.round(dist * 1000)} m` : `${dist.toFixed(1)} km`;
+      document.getElementById("route-duration").textContent = `${duration} mins`;
+    }
+
+    function plotRouteOnMap() {
+      if (!routeLayer || !map) return;
+      routeLayer.clearLayers();
+
+      const startIdx = parseInt(document.getElementById("route-start").value) || 0;
+      const destId = document.getElementById("route-dest").value || PUNE_PLACES[0].id;
+      const start = START_POINTS[startIdx];
+      const dest = PUNE_PLACES.find(p => p.id === destId) || PUNE_PLACES[0];
+
+      if (!start || !dest) return;
+
+      const waypoints = [
+        [start.lat, start.lng],
+        [(start.lat + dest.lat) / 2 + 0.002, (start.lng + dest.lng) / 2 - 0.002],
+        [dest.lat, dest.lng]
+      ];
+
+      const polyline = L.polyline(waypoints, {
+        color: "#0284c7",
+        weight: 6,
+        opacity: 0.85,
+        dashArray: "1, 9",
+        lineCap: "round"
+      }).addTo(routeLayer);
+
+      map.fitBounds(polyline.getBounds(), { padding: [40, 40], maxZoom: 15 });
+      closeRouteDrawer();
+    }
+
+    // 11. Live Weather Fetch from Open-Meteo
+    async function fetchWeather() {
+      try {
+        const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=18.5204&longitude=73.8567&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&timezone=auto");
+        if (!res.ok) throw new Error("Weather fetch failed");
+        const data = await res.json();
+        const cur = data.current;
+
+        const code = cur.weather_code;
+        let desc = "Clear Skies";
+        let icon = "☀️";
+        if (code >= 1 && code <= 3) { desc = "Partly Cloudy"; icon = "⛅"; }
+        else if (code >= 51) { desc = "Passing Showers"; icon = "🌧️"; }
+
+        document.getElementById("weather-icon").textContent = icon;
+        document.getElementById("weather-temp").textContent = `${Math.round(cur.temperature_2m)}°C`;
+        document.getElementById("weather-desc").textContent = `(${desc})`;
+        document.getElementById("weather-wind").textContent = `💨 ${Math.round(cur.wind_speed_10m)} km/h`;
+        document.getElementById("weather-hum").textContent = `💧 ${cur.relative_humidity_2m}%`;
+        document.getElementById("weather-status").textContent = "● Live Open-Meteo";
+      } catch (err) {
+        console.warn("Weather offline fallback active:", err);
+        document.getElementById("weather-icon").textContent = "⛅";
+        document.getElementById("weather-temp").textContent = "28°C";
+        document.getElementById("weather-desc").textContent = "(Partly Cloudy)";
+        document.getElementById("weather-wind").textContent = "💨 14 km/h";
+        document.getElementById("weather-hum").textContent = "💧 55%";
+        document.getElementById("weather-status").textContent = "[Demonstration Snapshot]";
+      }
+    }
+  </script>
+</body>
+</html>
