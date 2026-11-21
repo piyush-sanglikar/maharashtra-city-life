@@ -43,33 +43,8 @@ An ethical, intelligent, and interactive smart city exploration web platform anc
 - **CartoDB Voyager Vector Tiles**: Clean, high-performance map rendering.
 - **Open-Meteo API**: Open-access real-time weather service with zero API key requirement.
 
----
 
-## 🚀 How to Run Locally (Zero Installation)
 
-No Node.js, npm, or local servers are required!
-
-1. Open `city-life-deploy` in your file explorer.
-2. Double-click **`index.html`** or right-click and open with **Google Chrome** or **Microsoft Edge**.
-3. The platform will run instantly in your browser.
-
----
-
-## 🌐 Deploy to GitHub & Vercel in 2 Minutes
-
-### Step 1: Upload to GitHub (Via Browser — No Git CLI Needed)
-1. Go to [github.com/new](https://github.com/new) and create a new repository named `city-life`.
-2. On the repository page, click **"uploading an existing file"**.
-3. Drag and drop all files from `city-life-deploy`:
-   - `index.html`
-   - `vercel.json`
-   - `README.md`
-4. Click **"Commit changes"**.
-
-### Step 2: Deploy to Vercel (1-Click)
-1. Go to [vercel.com](https://vercel.com) and log in with your GitHub account.
-2. Click **"Add New..."** -> **"Project"**.
-3. Select your `city-life` repository.
 4. Framework Preset: Leave as **"Other"** (Vercel automatically detects `index.html` as a static site).
 5. Click **"Deploy"**.
 6. Your live public URL (e.g., `https://city-life.vercel.app`) will be live in 10 seconds!
