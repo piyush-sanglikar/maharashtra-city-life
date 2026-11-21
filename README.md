@@ -43,8 +43,3 @@ An ethical, intelligent, and interactive smart city exploration web platform anc
 - **CartoDB Voyager Vector Tiles**: Clean, high-performance map rendering.
 - **Open-Meteo API**: Open-access real-time weather service with zero API key requirement.
 
-
-
-4. Framework Preset: Leave as **"Other"** (Vercel automatically detects `index.html` as a static site).
-5. Click **"Deploy"**.
-6. Your live public URL (e.g., `https://city-life.vercel.app`) will be live in 10 seconds!
