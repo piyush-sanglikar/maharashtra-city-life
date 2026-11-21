@@ -1,0 +1,3158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Primary SEO Meta Tags -->
+  <title>City Life Maharashtra — Pune, Mumbai, Nagpur & Nashik Interactive Map, Safe Routes & Civic Guide</title>
+  <meta name="description" content="Explore Pune, Mumbai, Nagpur & Nashik with an interactive map, live road & traffic alerts, wheelchair-accessible venues, pure-veg eateries, metro transit hubs, and hazard-free routes." />
+  <meta name="keywords" content="Pune city map, Mumbai tourist places, Nagpur metro guide, Nashik temples and ghats, Maharashtra civic alerts, wheelchair accessible places Pune Mumbai, hazard free route planner, PMC BMC NMC alerts" />
+  <meta name="author" content="City Life Maharashtra Civic Portal" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="https://maharashtra-city-life.vercel.app/" />
+
+  <!-- Open Graph / WhatsApp / LinkedIn Social Sharing Tags -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="City Life — Maharashtra" />
+  <meta property="og:title" content="City Life — Maharashtra Interactive City Map & Safe Route Explorer" />
+  <meta property="og:description" content="Interactive city map, live road diversions, wheelchair-friendly spots, pure-veg food & metro guides for Pune, Mumbai, Nagpur & Nashik." />
+  <meta property="og:url" content="https://maharashtra-city-life.vercel.app/" />
+  <meta property="og:locale" content="en_IN" />
+  <meta property="og:locale:alternate" content="mr_IN" />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="City Life — Maharashtra Interactive Map & Civic Guide" />
+  <meta name="twitter:description" content="Explore Pune, Mumbai, Nagpur & Nashik with live traffic alerts, hazard-bypass directions & verified places." />
+
+  <!-- Structured Data: Schema.org WebApplication + ItemList for Google Rich Results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "City Life — Maharashtra Civic & Urban Explorer",
+        "url": "https://maharashtra-city-life.vercel.app/",
+        "applicationCategory": "TravelApplication",
+        "operatingSystem": "Web Browser",
+        "inLanguage": ["en", "mr"],
+        "areaServed": [
+          { "@type": "City", "name": "Pune, Maharashtra, India" },
+          { "@type": "City", "name": "Mumbai, Maharashtra, India" },
+          { "@type": "City", "name": "Nagpur, Maharashtra, India" },
+          { "@type": "City", "name": "Nashik, Maharashtra, India" }
+        ],
+        "description": "Interactive city map, hazard-aware route planner, wheelchair accessibility directory, and live municipal alert feed for Pune, Mumbai, Nagpur, and Nashik."
+      },
+      {
+        "@type": "ItemList",
+        "name": "Top Verified Landmarks & Civic Hubs in Maharashtra",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Shaniwar Wada, Pune" },
+          { "@type": "ListItem", "position": 2, "name": "Chhatrapati Shivaji Maharaj Terminus (CSMT), Mumbai" },
+          { "@type": "ListItem", "position": 3, "name": "Gateway of India, Mumbai" },
+          { "@type": "ListItem", "position": 4, "name": "Deekshabhoomi Stupa, Nagpur" },
+          { "@type": "ListItem", "position": 5, "name": "Ramkund & Godavari Riverfront, Nashik" }
+        ]
+      }
+    ]
+  }
+  </script>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            civic: {
+              50: '#eef6ff',
+              100: '#d9eaff',
+              500: '#2563eb',
+              600: '#1d4ed8',
+              700: '#1e40af',
+              900: '#0f172a',
+            },
+            saffron: {
+              500: '#f97316',
+              600: '#ea580c',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #334155;
+    }
+    /* Leaflet Custom Pin Pulse & Google Maps Aesthetic */
+    @keyframes pulseRing {
+      0% {
+        transform: scale(0.85);
+        opacity: 0.85;
+      }
+      70% {
+        transform: scale(2.2);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(2.2);
+        opacity: 0;
+      }
+    }
+    .hazard-pulse {
+      animation: pulseRing 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    }
+    .gmaps-shadow {
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16), 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+    .gmaps-drawer-shadow {
+      box-shadow: 4px 0 24px rgba(15, 23, 42, 0.18);
+    }
+    .teardrop-pin {
+      filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.35));
+      transition: transform 0.15s ease;
+    }
+    .teardrop-pin:hover {
+      transform: translateY(-3px) scale(1.08);
+    }
+    .leaflet-popup-content-wrapper {
+      border-radius: 12px !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18) !important;
+      padding: 2px !important;
+    }
+    .dark .leaflet-popup-content-wrapper,
+    .dark .leaflet-popup-tip {
+      background: #1e293b !important;
+      color: #f8fafc !important;
+    }
+    .leaflet-container {
+      z-index: 10;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+    }
+    /* Hide default Leaflet zoom control since we render Google Maps bottom-right stack */
+    .leaflet-control-zoom {
+      display: none !important;
+    }
+    /* Markdown styling inside AI response */
+    .ai-prose p { margin-bottom: 0.5rem; }
+    .ai-prose p:last-child { margin-bottom: 0; }
+    .ai-prose ul { list-style-type: disc; padding-left: 1.25rem; margin-bottom: 0.5rem; }
+    .ai-prose li { margin-bottom: 0.25rem; }
+    .ai-prose strong { font-weight: 700; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 antialiased">
+
+  <!-- Toast Notification Banner (Replaces alert) -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
+
+  <!-- Top Clean & Simple Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-center justify-between gap-2.5 py-2.5">
+        
+        <!-- Brand & Simple Subtitle -->
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-orange-500 flex items-center justify-center text-white shadow-sm">
+            <i data-lucide="map-pinned" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h1 class="text-sm sm:text-base font-extrabold tracking-tight text-slate-900 dark:text-white" data-i18n="appTitle">
+              City Life — Maharashtra
+            </h1>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">
+              Simple City Map, Safe Routes & Local Guide
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 1: Pick Your City -->
+        <nav aria-label="Maharashtra Cities" class="flex items-center gap-1.5">
+          <span class="hidden md:inline text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1">City:</span>
+          <div class="flex items-center bg-slate-100 dark:bg-slate-800/90 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700 overflow-x-auto max-w-full" id="city-switcher">
+            <a href="#pune" onclick="switchCity('pune'); return false;" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-white text-blue-600 shadow-sm">Pune</a>
+            <a href="#mumbai" onclick="switchCity('mumbai'); return false;" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-slate-600">Mumbai</a>
+            <a href="#nagpur" onclick="switchCity('nagpur'); return false;" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-slate-600">Nagpur</a>
+            <a href="#nashik" onclick="switchCity('nashik'); return false;" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-slate-600">Nashik</a>
+          </div>
+        </nav>
+
+        <!-- Essential Actions Only -->
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <!-- Bilingual Toggle EN / मराठी -->
+          <button id="lang-toggle" onclick="toggleLanguage()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-1" title="Switch English / Marathi">
+            <i data-lucide="languages" class="w-3.5 h-3.5 text-orange-500"></i>
+            <span id="lang-label">मराठी</span>
+          </button>
+
+          <!-- Dark/Light Theme Toggle -->
+          <button id="theme-toggle" onclick="toggleTheme()" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition" title="Dark / Light Mode">
+            <i data-lucide="moon" id="theme-icon" class="w-4 h-4 text-slate-700 dark:text-slate-200"></i>
+          </button>
+
+          <!-- Primary CTA: Report Road Issue -->
+          <button onclick="openReportModal()" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+            <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+            <span data-i18n="reportBtn">Report Issue</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace Container -->
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 space-y-4">
+
+    <!-- Friendly 1-Line Quick Guide + Simple 3-Tab Switcher -->
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3 sm:px-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+      
+      <!-- 3 Big, Clear View Tabs so user isn't overwhelmed -->
+      <div class="grid grid-cols-3 sm:flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+        <button onclick="switchMainTab('map')" id="tab-btn-map" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-extrabold bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-xs flex items-center justify-center gap-1.5 transition">
+          <i data-lucide="map" class="w-4 h-4"></i>
+          <span>1. City Map</span>
+        </button>
+        <button onclick="switchMainTab('places')" id="tab-btn-places" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 flex items-center justify-center gap-1.5 transition">
+          <i data-lucide="list" class="w-4 h-4"></i>
+          <span>2. Places List</span>
+        </button>
+        <button onclick="switchMainTab('help')" id="tab-btn-help" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 flex items-center justify-center gap-1.5 transition">
+          <i data-lucide="message-circle-question" class="w-4 h-4"></i>
+          <span>3. Alerts & AI</span>
+          <span id="tab-alerts-pill" class="px-1.5 py-0.2 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300 text-[10px] font-extrabold">3</span>
+        </button>
+      </div>
+
+      <!-- Plain-Language Tip & Emergency Helpline Chip -->
+      <div class="flex flex-wrap items-center justify-between md:justify-end gap-2 text-xs">
+        <span id="simple-step-hint" class="text-slate-600 dark:text-slate-300 font-medium">
+          👆 Tap any pin on the map to see details & directions.
+        </span>
+        <span id="header-helpline-chip" class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800 font-bold text-[11px]">
+          Helpline: 1800-1030-222
+        </span>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 1: CLEAN GOOGLE MAPS-STYLE INTERACTIVE MAP                        -->
+    <!-- ===================================================================== -->
+    <section id="view-tab-map" aria-label="Interactive Maharashtra City Map" class="relative w-full h-[540px] sm:h-[620px] rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-md bg-slate-200 dark:bg-slate-900">
+      
+      <!-- Leaflet Full-Bleed Map Viewport -->
+      <div id="civic-map" class="w-full h-full"></div>
+
+      <!-- 1. FLOATING TOP-LEFT GOOGLE MAPS SEARCH PILL BAR + CATEGORY CHIPS -->
+      <div class="absolute top-3 left-3 right-3 sm:right-auto z-30 flex flex-col lg:flex-row items-start lg:items-center gap-2.5 pointer-events-none">
+        
+        <!-- Search Box Container -->
+        <div class="relative w-full sm:w-[375px] pointer-events-auto">
+          <div class="flex items-center bg-white dark:bg-slate-900 rounded-full gmaps-shadow border border-slate-200/90 dark:border-slate-700 px-3.5 py-2 transition focus-within:ring-2 focus-within:ring-blue-500">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 mr-2 shrink-0"></i>
+            
+            <input type="text" id="gmaps-search-input" aria-label="Search Maharashtra places, metro stations, food, or road alerts" oninput="handleMapSearchInput()" onfocus="handleMapSearchInput()" placeholder="Search Pune places, metro, food..." class="flex-1 bg-transparent text-xs sm:text-sm font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none min-w-0" autocomplete="off" />
+            
+            <!-- Clear Search Button -->
+            <button type="button" id="gmaps-search-clear" onclick="clearMapSearch()" class="hidden p-1 text-slate-400 hover:text-slate-600 mr-1" title="Clear Search">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+
+            <div class="h-5 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1"></div>
+
+            <!-- Clear "Directions" Button with Label so users know what it does -->
+            <button type="button" onclick="openDirectionsDrawer()" class="px-2.5 py-1 rounded-full bg-blue-600 text-white hover:bg-blue-500 text-xs font-bold flex items-center gap-1 transition shrink-0" title="Get Route & Directions">
+              <i data-lucide="corner-up-right" class="w-3.5 h-3.5"></i>
+              <span>Route</span>
+            </button>
+          </div>
+
+          <!-- Instant Autocomplete Dropdown -->
+          <div id="gmaps-autocomplete" class="hidden mt-1.5 bg-white dark:bg-slate-900 rounded-2xl gmaps-shadow border border-slate-200 dark:border-slate-700 overflow-hidden max-h-[300px] overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Floating Google Maps Category Filter Pills beside Search Bar -->
+        <div class="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1 pointer-events-auto" id="gmaps-category-chips">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- 2. SLIDE-OVER LEFT GOOGLE MAPS INFO & DIRECTIONS DRAWER -->
+      <aside id="gmaps-left-drawer" class="hidden absolute top-0 left-0 bottom-0 z-30 w-full sm:w-[390px] bg-white dark:bg-slate-900 gmaps-drawer-shadow border-r border-slate-200 dark:border-slate-800 flex flex-col pt-16 sm:pt-[68px] transition-transform duration-200">
+        <!-- Close Drawer Top Strip -->
+        <div class="px-4 py-2 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-800/50">
+          <span id="drawer-header-label" class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Place Details</span>
+          <button onclick="closeMapDrawer()" class="px-2 py-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1">
+            <span>Close</span>
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <!-- Drawer Dynamic Body -->
+        <div id="gmaps-drawer-content" class="flex-1 overflow-y-auto">
+          <!-- Populated dynamically -->
+        </div>
+      </aside>
+
+      <!-- Pin Picking Helper Banner -->
+      <div id="pin-pick-strip" class="hidden absolute top-20 left-1/2 -translate-x-1/2 z-30 bg-rose-600 text-white px-4 py-2 rounded-full shadow-lg text-xs font-bold flex items-center gap-2.5">
+        <i data-lucide="map-pin" class="w-4 h-4 animate-bounce"></i>
+        <span>Tap anywhere on the map to mark an issue</span>
+        <button onclick="cancelMapPinPick()" class="underline hover:text-rose-100 ml-1">Cancel</button>
+      </div>
+
+      <!-- 3. FLOATING BOTTOM-LEFT GOOGLE MAPS "LAYERS" CARD + ROAD ALERTS TOGGLE -->
+      <div class="absolute bottom-4 left-3 z-20 flex flex-wrap items-end gap-2">
+        
+        <!-- Layers Thumbnail Button & Expandable Switcher -->
+        <div class="relative">
+          <div id="gmaps-layers-popover" class="hidden mb-2 bg-white dark:bg-slate-900 rounded-2xl gmaps-shadow border border-slate-200 dark:border-slate-700 p-3 w-[270px] space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-slate-800 dark:text-slate-100">Map View</span>
+              <button onclick="toggleLayersPopover()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+            </div>
+            <div class="grid grid-cols-4 gap-2 text-center text-[11px] font-semibold">
+              <button onclick="setMapBaseLayer('street')" id="layer-opt-street" class="layer-opt flex flex-col items-center gap-1 p-1 rounded-xl border-2 border-blue-600 bg-blue-50/50 dark:bg-blue-950/40">
+                <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-emerald-100 via-amber-50 to-blue-100 border border-slate-300 flex items-center justify-center text-slate-700 font-bold text-[10px]">Road</div>
+                <span>Street</span>
+              </button>
+              <button onclick="setMapBaseLayer('satellite')" id="layer-opt-satellite" class="layer-opt flex flex-col items-center gap-1 p-1 rounded-xl border-2 border-transparent hover:border-slate-300">
+                <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-emerald-900 via-teal-950 to-slate-900 border border-slate-600 flex items-center justify-center text-emerald-200 font-bold text-[10px]">Sat</div>
+                <span>Satellite</span>
+              </button>
+              <button onclick="setMapBaseLayer('terrain')" id="layer-opt-terrain" class="layer-opt flex flex-col items-center gap-1 p-1 rounded-xl border-2 border-transparent hover:border-slate-300">
+                <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-lime-200 via-stone-200 to-amber-200 border border-slate-300 flex items-center justify-center text-stone-700 font-bold text-[10px]">Topo</div>
+                <span>Terrain</span>
+              </button>
+              <button onclick="setMapBaseLayer('dark')" id="layer-opt-dark" class="layer-opt flex flex-col items-center gap-1 p-1 rounded-xl border-2 border-transparent hover:border-slate-300">
+                <div class="w-11 h-11 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center text-blue-400 font-bold text-[10px]">Night</div>
+                <span>Dark</span>
+              </button>
+            </div>
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+              <span class="font-semibold text-slate-600 dark:text-slate-300">Show Road Alerts</span>
+              <input type="checkbox" id="layer-hazards-checkbox" checked onchange="toggleHazardsLayer()" class="rounded text-blue-600 focus:ring-blue-500" />
+            </div>
+          </div>
+
+          <!-- Google Maps Square Layers Thumbnail Trigger -->
+          <button onclick="toggleLayersPopover()" class="group relative w-[68px] h-[68px] rounded-xl overflow-hidden border-2 border-white dark:border-slate-700 gmaps-shadow bg-slate-100 flex flex-col justify-end text-left transition hover:scale-[1.03]" title="Change Map Style">
+            <div id="layers-thumb-bg" class="absolute inset-0 bg-gradient-to-br from-emerald-100 via-amber-50 to-blue-200"></div>
+            <div class="absolute inset-0 opacity-40" style="background-image: linear-gradient(#94a3b8 1px, transparent 1px), linear-gradient(90deg, #94a3b8 1px, transparent 1px); background-size: 14px 14px;"></div>
+            <div class="relative z-10 w-full bg-slate-900/75 backdrop-blur-xs text-white px-2 py-1 flex items-center gap-1 text-[10px] font-bold">
+              <i data-lucide="layers" class="w-3 h-3"></i>
+              <span>Layers</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Road Alerts Pill -->
+        <button id="toggle-hazards-btn" onclick="toggleHazardsLayer()" class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3 py-2 rounded-xl gmaps-shadow border border-slate-200 dark:border-slate-700 text-xs font-bold flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+          <span id="hazards-count-badge">Road Alerts (3)</span>
+        </button>
+
+        <!-- Mark Issue on Map Button -->
+        <button onclick="startMapPinPick()" class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3 py-2 rounded-xl gmaps-shadow border border-slate-200 dark:border-slate-700 text-xs font-bold text-rose-600 dark:text-rose-400 flex items-center gap-1.5 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition">
+          <i data-lucide="map-pin-plus" class="w-3.5 h-3.5"></i>
+          <span>Mark Issue on Map</span>
+        </button>
+      </div>
+
+      <!-- 4. FLOATING BOTTOM-RIGHT GOOGLE MAPS CONTROLS -->
+      <div class="absolute bottom-6 right-3 z-20 flex flex-col items-center gap-2">
+        <button onclick="centerOnCity()" class="w-9 h-9 rounded-lg bg-white dark:bg-slate-900 gmaps-shadow border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition" title="Center Map on City">
+          <i data-lucide="compass" class="w-4 h-4 text-rose-500"></i>
+        </button>
+
+        <button onclick="locateUserOnMap()" class="w-9 h-9 rounded-lg bg-white dark:bg-slate-900 gmaps-shadow border border-slate-200 dark:border-slate-700 flex items-center justify-center text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 transition" title="Show My Location">
+          <i data-lucide="locate-fixed" class="w-4 h-4"></i>
+        </button>
+
+        <div class="flex flex-col rounded-lg bg-white dark:bg-slate-900 gmaps-shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <button onclick="map.zoomIn()" class="w-9 h-9 flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border-b border-slate-200 dark:border-slate-700 font-bold text-base" title="Zoom in">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+          </button>
+          <button onclick="map.zoomOut()" class="w-9 h-9 flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-base" title="Zoom out">
+            <i data-lucide="minus" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 2: PLACES DIRECTORY (Clean & Easy Card List)                      -->
+    <!-- ===================================================================== -->
+    <section id="view-tab-places" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 sm:p-6 shadow-sm space-y-5">
+      
+      <!-- Header + Compare Action Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg sm:text-xl font-extrabold tracking-tight" id="directory-title">Best Places to Visit in Pune</h2>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Filter by wheelchair access, pure-veg food, or budget—then tap "Show on Map".</p>
+        </div>
+
+        <button id="open-compare-btn" onclick="openCompareModal()" disabled class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed transition flex items-center gap-2">
+          <i data-lucide="columns-3" class="w-4 h-4"></i>
+          <span>Compare (<span id="compare-count">0</span>/3)</span>
+        </button>
+      </div>
+
+      <!-- Simple Search & Quick Toggles -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+        <div class="md:col-span-4 relative">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+          <input type="text" id="place-search" oninput="renderPlacesGrid()" placeholder="Search by name or area..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div class="md:col-span-5 flex flex-wrap items-center gap-2">
+          <button id="filter-wheelchair" onclick="toggleBooleanFilter('wheelchair')" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold flex items-center gap-1.5 transition hover:border-blue-400">
+            <i data-lucide="accessibility" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Wheelchair Friendly</span>
+          </button>
+          <button id="filter-veg" onclick="toggleBooleanFilter('veg')" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold flex items-center gap-1.5 transition hover:border-emerald-400">
+            <i data-lucide="leaf" class="w-3.5 h-3.5 text-emerald-600"></i>
+            <span>Pure Veg</span>
+          </button>
+        </div>
+
+        <div class="md:col-span-3 flex items-center justify-end gap-1.5">
+          <span class="text-xs font-semibold text-slate-500 mr-1">Budget:</span>
+          <select id="filter-cost" onchange="renderPlacesGrid()" class="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="all">Any Price</option>
+            <option value="Free">Free Entry</option>
+            <option value="₹">Budget (₹)</option>
+            <option value="₹₹">Moderate (₹₹)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Category Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1" id="category-pills">
+        <!-- Populated via JS -->
+      </div>
+
+      <!-- Places Cards Grid -->
+      <div id="places-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 3: ROAD ALERTS, CITY STATUS & AI HELPER                           -->
+    <!-- ===================================================================== -->
+    <section id="view-tab-help" class="hidden space-y-5">
+      
+      <!-- City Quick Info Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4" id="telemetry-cards">
+        <!-- Populated dynamically -->
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Left 6 Cols: Simple AI Trip & Safety Helper -->
+        <div class="lg:col-span-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
+          <div class="px-4 py-3 bg-gradient-to-r from-slate-900 to-indigo-950 text-white flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
+                <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-sm" data-i18n="aiGuideTitle">Ask City Helper</h3>
+                <p class="text-[11px] text-slate-300" id="ai-mode-subtitle">Instant answers on places, food & safe routes</p>
+              </div>
+            </div>
+
+            <button id="ai-engine-toggle" onclick="toggleAiEngine()" class="px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 text-[11px] font-mono-code font-semibold transition flex items-center gap-1.5" title="Switch AI Mode">
+              <span id="ai-engine-dot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span id="ai-engine-label">Smart AI</span>
+            </button>
+          </div>
+
+          <div id="ai-chat-feed" class="p-4 space-y-3 h-[270px] overflow-y-auto text-xs sm:text-sm bg-slate-50/50 dark:bg-slate-950/40">
+            <!-- Initial greeting populated via JS -->
+          </div>
+
+          <div class="px-3 pt-2 pb-1.5 border-t border-slate-100 dark:border-slate-800 flex gap-1.5 overflow-x-auto" id="ai-prompt-chips">
+            <!-- Populated dynamically -->
+          </div>
+
+          <form onsubmit="handleAiSubmit(event)" class="p-3 pt-1.5 flex gap-2">
+            <input type="text" id="ai-input" placeholder="Ask a question (e.g. wheelchair parks, pure veg food)..." class="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <button type="submit" id="ai-send-btn" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center justify-center transition">
+              Ask
+            </button>
+          </form>
+        </div>
+
+        <!-- Right 6 Cols: Road & Civic Alerts -->
+        <div class="lg:col-span-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 sm:p-5">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="radio" class="w-4 h-4 text-rose-500 animate-pulse"></i>
+              <h3 class="font-bold text-sm sm:text-base" data-i18n="activeAlertsTitle">Live Road & Safety Alerts</h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-mono-code px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" id="municipal-body-badge">PMC Feed</span>
+              <button onclick="openReportModal()" class="text-xs font-bold text-rose-600 hover:underline">+ Report Issue</button>
+            </div>
+          </div>
+
+          <div id="alerts-feed" class="space-y-2.5 h-[325px] overflow-y-auto pr-1">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEO-Friendly Crawlable Maharashtra City Guide Summary (Visible to Search Bots & Users) -->
+    <section aria-label="Maharashtra Cities Overview" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 sm:p-5 text-xs text-slate-600 dark:text-slate-300 space-y-2">
+      <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Explore Major Cities Across Maharashtra</h2>
+      <p class="leading-relaxed">
+        <strong>City Life — Maharashtra</strong> provides real-time civic mapping, metro transit connections, wheelchair-accessible landmark directories, and road diversion alerts across <strong>Pune</strong> (Shaniwar Wada, Dagdusheth Ganpati, FC Road, Aga Khan Palace), <strong>Mumbai</strong> (CSMT, Gateway of India, Marine Drive, Siddhivinayak Temple), <strong>Nagpur</strong> (Deekshabhoomi, Zero Mile Freedom Park, Futala Lake), and <strong>Nashik</strong> (Ramkund Godavari Ghat, Pandavleni Caves, Kalaram Temple).
+      </p>
+      <div class="flex flex-wrap gap-2 pt-1">
+        <a href="#pune" onclick="switchCity('pune'); return false;" class="font-bold text-blue-600 dark:text-blue-400 hover:underline">Pune Map & PMC Alerts</a>
+        <span>•</span>
+        <a href="#mumbai" onclick="switchCity('mumbai'); return false;" class="font-bold text-blue-600 dark:text-blue-400 hover:underline">Mumbai Map & BMC Alerts</a>
+        <span>•</span>
+        <a href="#nagpur" onclick="switchCity('nagpur'); return false;" class="font-bold text-blue-600 dark:text-blue-400 hover:underline">Nagpur Map & NMC Alerts</a>
+        <span>•</span>
+        <a href="#nashik" onclick="switchCity('nashik'); return false;" class="font-bold text-blue-600 dark:text-blue-400 hover:underline">Nashik Map & Citilinc Guide</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Simple Footer -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 mt-6 py-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
+      <span class="font-bold text-slate-700 dark:text-slate-200">City Life — Maharashtra (Pune • Mumbai • Nagpur • Nashik)</span>
+      <span>Emergency Helpline: 112 • Civic Portal</span>
+    </div>
+  </footer>
+
+  <!-- MODAL 1: Citizen Safety & Civic Issue Reporting Modal -->
+  <div id="report-modal" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-950 text-orange-600 flex items-center justify-center">
+            <i data-lucide="megaphone" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-base">Submit Citizen Civic Notice</h3>
+            <p class="text-xs text-slate-500">Immediately updates live map & hazard-aware routing</p>
+          </div>
+        </div>
+        <button onclick="closeReportModal()" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form onsubmit="submitCitizenReport(event)" class="space-y-3.5 text-xs sm:text-sm">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold mb-1">Issue Category</label>
+            <select id="report-type" required class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2">
+              <option value="Traffic Diversion">Traffic Diversion / Metro Work</option>
+              <option value="Road Hazard / Pothole">Road Hazard / Pothole</option>
+              <option value="Streetlight Outage">Streetlight Outage</option>
+              <option value="Waterlogging">Waterlogging / Drainage</option>
+              <option value="Broken Footpath">Accessibility / Broken Footpath</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1">Severity Level</label>
+            <select id="report-severity" required class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2">
+              <option value="Moderate">Moderate Caution</option>
+              <option value="High">High — Reroute Recommended</option>
+              <option value="Advisory">Low / Informational</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold mb-1">Area / Landmark Name</label>
+          <input type="text" id="report-location-name" required placeholder="e.g., Near Fergusson College Gate 2, Pune" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold mb-1">Latitude</label>
+            <input type="number" step="any" id="report-lat" required class="w-full font-mono-code rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-xs" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1">Longitude</label>
+            <input type="number" step="any" id="report-lng" required class="w-full font-mono-code rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-xs" />
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between bg-blue-50 dark:bg-blue-950/40 px-3 py-2 rounded-xl border border-blue-200/70 dark:border-blue-800/70 text-xs">
+          <span class="text-blue-800 dark:text-blue-200">Want exact coordinates? Pick directly on the map.</span>
+          <button type="button" onclick="closeReportModal(); startMapPinPick();" class="font-bold text-blue-600 dark:text-blue-400 underline">Pick on Map</button>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold mb-1">Description & Commuter Advice</label>
+          <textarea id="report-desc" rows="2" required placeholder="Describe impact on pedestrians, wheelchairs, or vehicles..." class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeReportModal()" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-xs">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-sm">Publish Civic Notice</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Side-by-Side Venue Comparison Modal -->
+  <div id="compare-modal" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-4xl w-full p-5 sm:p-6 shadow-2xl max-h-[88vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <i data-lucide="columns-3" class="w-5 h-5 text-blue-600"></i>
+          <h3 class="font-extrabold text-base sm:text-lg">Side-by-Side Civic & Visitor Matrix</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="clearComparison()" class="text-xs font-semibold text-rose-600 hover:underline px-2">Clear All</button>
+          <button onclick="closeCompareModal()" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="compare-table-container" class="overflow-x-auto">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. MULTI-CITY MAHARASHTRA CIVIC & URBAN DATASET (33 VERIFIED VENUES)
+    // =========================================================================
+    const MAHARASHTRA_DATA = {
+      pune: {
+        id: 'pune',
+        name: 'Pune',
+        marathiName: 'पुणे',
+        municipalBody: 'PMC (Pune Municipal Corporation)',
+        shortBody: 'PMC',
+        center: [18.5204, 73.8567],
+        zoom: 13,
+        telemetry: {
+          aqi: '84 (Moderate)',
+          transitStatus: 'Aqua & Purple Metro Operational',
+          emergencyHelpline: '1800-1030-222',
+          activeWorks: '3 Corridor Diversions'
+        },
+        quickPrompts: [
+          'Wheelchair-accessible half-day Pune trip',
+          'Best pure veg food near Shivajinagar',
+          'Are there road diversions near JM Road?'
+        ],
+        places: [
+          {
+            id: 'pun-1',
+            name: 'Shaniwar Wada',
+            category: 'Historical',
+            area: 'Shaniwar Peth',
+            lat: 18.5195,
+            lng: 73.8553,
+            rating: 4.5,
+            reviewsCount: 42810,
+            cost: '₹',
+            feeDetail: '₹25 Indian / ₹300 Foreign',
+            hours: '09:30 AM – 05:00 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'PMC Metro Station (450m)',
+            verifiedBy: 'ASI & PMC Heritage Cell',
+            summary: '18th-century seat of the Peshwas featuring massive spiked gates, landscaped gardens, and evening light-and-sound heritage walks.'
+          },
+          {
+            id: 'pun-2',
+            name: 'Shreemant Dagdusheth Halwai Ganpati',
+            category: 'Cultural & Temples',
+            area: 'Budhwar Peth',
+            lat: 18.5165,
+            lng: 73.8561,
+            rating: 4.9,
+            reviewsCount: 89420,
+            cost: 'Free',
+            feeDetail: 'Free Darshan',
+            hours: '06:00 AM – 10:30 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Mandai Metro Station (350m)',
+            verifiedBy: 'PMC Civic Trust',
+            summary: 'Iconic cultural landmark renowned for public philanthropy, illuminated architecture, and dedicated senior/wheelchair darshan lanes.'
+          },
+          {
+            id: 'pun-3',
+            name: 'Vaishali Restaurant (FC Road)',
+            category: 'Food & Dining',
+            area: 'Fergusson College Road',
+            lat: 18.5226,
+            lng: 73.8414,
+            rating: 4.4,
+            reviewsCount: 31900,
+            cost: '₹',
+            feeDetail: '₹150–₹350 per person',
+            hours: '07:00 AM – 11:00 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Deccan Gymkhana Metro (600m)',
+            verifiedBy: 'FSSAI & Student Hub Index',
+            summary: 'Legendary pure-vegetarian South Indian institution favored by students and families; famous for SPDP and filter coffee.'
+          },
+          {
+            id: 'pun-4',
+            name: 'Pu La Deshpande Garden (Okayama)',
+            category: 'Parks & Nature',
+            area: 'Sinhagad Road',
+            lat: 18.4912,
+            lng: 73.8358,
+            rating: 4.6,
+            reviewsCount: 24500,
+            cost: '₹',
+            feeDetail: '₹10 Entry',
+            hours: '06:00 AM – 10:30 AM, 04:00 PM – 07:30 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'PMPML Garden Stop (100m)',
+            verifiedBy: 'PMC Garden Dept',
+            summary: 'Japanese friendship garden inspired by Korakuen Park with paved barrier-free walkways, koi ponds, and tranquil bamboo groves.'
+          },
+          {
+            id: 'pun-5',
+            name: 'Aga Khan Palace',
+            category: 'Historical',
+            area: 'Nagar Road, Kalyani Nagar',
+            lat: 18.5525,
+            lng: 73.9015,
+            rating: 4.5,
+            reviewsCount: 29110,
+            cost: '₹',
+            feeDetail: '₹25 Indian / ₹300 Foreign',
+            hours: '09:00 AM – 05:30 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Kalyani Nagar Metro (900m)',
+            verifiedBy: 'Gandhi National Memorial Society',
+            summary: 'National monument of India’s freedom struggle surrounded by 19 acres of manicured lawns and museum galleries.'
+          },
+          {
+            id: 'pun-6',
+            name: 'Fergusson College & Amphitheatre',
+            category: 'Student / Budget',
+            area: 'Shivajinagar',
+            lat: 18.5236,
+            lng: 73.8388,
+            rating: 4.7,
+            reviewsCount: 14200,
+            cost: 'Free',
+            feeDetail: 'Open Campus Walk',
+            hours: '07:00 AM – 07:00 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Deccan Metro (750m)',
+            verifiedBy: 'Deccan Education Society',
+            summary: 'Gothic-revival heritage campus, botanical hill trails, and vibrant student bookstalls along FC Road.'
+          },
+          {
+            id: 'pun-7',
+            name: 'Raja Dinkar Kelkar Museum',
+            category: 'Cultural & Temples',
+            area: 'Bajirao Road',
+            lat: 18.5106,
+            lng: 73.8543,
+            rating: 4.5,
+            reviewsCount: 11840,
+            cost: '₹',
+            feeDetail: '₹80 Adult / ₹20 Student',
+            hours: '10:00 AM – 05:30 PM',
+            wheelchair: false,
+            vegFriendly: true,
+            transit: 'Mandai Metro (700m)',
+            verifiedBy: 'Maharashtra State Culture Dept',
+            summary: 'Extraordinary collection of 20,000+ everyday Indian artifacts, Mastani Mahal reconstruction, and antique musical instruments.'
+          },
+          {
+            id: 'pun-8',
+            name: 'Shivajinagar Integrated Transit Hub',
+            category: 'Public Facilities',
+            area: 'Shivajinagar',
+            lat: 18.5314,
+            lng: 73.8446,
+            rating: 4.4,
+            reviewsCount: 9320,
+            cost: 'Free',
+            feeDetail: 'Public Civic Hub',
+            hours: '24 Hours',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Underground Metro + Suburban Rail',
+            verifiedBy: 'MahaMetro & PMPML',
+            summary: 'Multi-modal interchange connecting Pune Metro underground station, suburban railway, e-bus depot, and accessible public restrooms.'
+          },
+          {
+            id: 'pun-9',
+            name: 'Vetal Tekdi (ARAI Hill)',
+            category: 'Parks & Nature',
+            area: 'Kothrud / Panchavati',
+            lat: 18.5269,
+            lng: 73.8147,
+            rating: 4.8,
+            reviewsCount: 19600,
+            cost: 'Free',
+            feeDetail: 'Free Nature Trail',
+            hours: '05:30 AM – 07:30 PM',
+            wheelchair: false,
+            vegFriendly: true,
+            transit: 'Nal Stop Metro (1.8 km)',
+            verifiedBy: 'PMC Urban Forestry',
+            summary: 'Highest point in Pune city offering panoramic sunrise views, birdwatching trails, and clean air.'
+          }
+        ],
+        alerts: [
+          {
+            id: 'al-pun-1',
+            type: 'Traffic Diversion',
+            severity: 'High',
+            location: 'JM Road & Balgandharva Chowk',
+            lat: 18.5218,
+            lng: 73.8478,
+            desc: 'Utility ducting and pedestrian plaza widening; single-lane slow movement during peak hours.',
+            source: 'PMC Traffic Cell',
+            verifiedCount: 14,
+            status: 'Official Municipal'
+          },
+          {
+            id: 'al-pun-2',
+            type: 'Broken Footpath',
+            severity: 'Moderate',
+            location: 'Bajirao Road near Kelkar Museum',
+            lat: 18.5112,
+            lng: 73.8548,
+            desc: 'Tactile paving tiles uneven for 80m stretch; wheelchair users advised to use East sidewalk.',
+            source: 'Citizen Report #409',
+            verifiedCount: 5,
+            status: 'Community Verified'
+          },
+          {
+            id: 'al-pun-3',
+            type: 'Streetlight Outage',
+            severity: 'Advisory',
+            location: 'Panchavati Vetal Tekdi Base Gate',
+            lat: 18.5295,
+            lng: 73.8180,
+            desc: '3 LED poles under maintenance; carry flashlight after 6:45 PM.',
+            source: 'Citizen Report #412',
+            verifiedCount: 2,
+            status: 'Unverified'
+          }
+        ]
+      },
+
+      mumbai: {
+        id: 'mumbai',
+        name: 'Mumbai',
+        marathiName: 'मुंबई',
+        municipalBody: 'BMC (Brihanmumbai Municipal Corp)',
+        shortBody: 'BMC',
+        center: [18.9388, 72.8354],
+        zoom: 13,
+        telemetry: {
+          aqi: '96 (Moderate)',
+          transitStatus: 'Western/Central Rail + Aqua Line 3',
+          emergencyHelpline: '1916 (BMC Disaster Cell)',
+          activeWorks: 'Coastal Road & Metro 3'
+        },
+        quickPrompts: [
+          'Accessible heritage walk in South Mumbai',
+          'Best pure veg snacks near Churchgate / Fort',
+          'Check waterlogging or traffic alerts in Mumbai'
+        ],
+        places: [
+          {
+            id: 'mum-1',
+            name: 'Chhatrapati Shivaji Maharaj Terminus (CSMT)',
+            category: 'Historical',
+            area: 'Fort',
+            lat: 18.9398,
+            lng: 72.8355,
+            rating: 4.8,
+            reviewsCount: 95400,
+            cost: 'Free',
+            feeDetail: 'Heritage Gallery ₹50',
+            hours: '24 Hours (Museum 10 AM – 5 PM)',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'CSMT Suburban & Metro Line 3',
+            verifiedBy: 'UNESCO & Central Railway',
+            summary: 'UNESCO World Heritage Victorian Gothic railway terminus with tactile pathways, step-free concourse, and evening facade lighting.'
+          },
+          {
+            id: 'mum-2',
+            name: 'Gateway of India & Apollo Bunder',
+            category: 'Historical',
+            area: 'Colaba',
+            lat: 18.9220,
+            lng: 72.8347,
+            rating: 4.7,
+            reviewsCount: 142000,
+            cost: 'Free',
+            feeDetail: 'Free Waterfront Plaza',
+            hours: '24 Hours',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'CSMT / Churchgate (2.2 km)',
+            verifiedBy: 'BMC A-Ward Civic Cell',
+            summary: 'Iconic basalt triumphal arch overlooking Mumbai Harbour with wide paved pedestrian promenade.'
+          },
+          {
+            id: 'mum-3',
+            name: 'Marine Drive Promenade',
+            category: 'Parks & Nature',
+            area: 'Nariman Point to Chowpatty',
+            lat: 18.9432,
+            lng: 72.8235,
+            rating: 4.8,
+            reviewsCount: 118500,
+            cost: 'Free',
+            feeDetail: 'Free Public Promenade',
+            hours: '24 Hours',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Churchgate & Marine Lines Stations',
+            verifiedBy: 'BMC Coastal Promenade Authority',
+            summary: '3.6 km C-shaped coastal boulevard featuring level stone walkways, sea breeze seating, and accessible ramps.'
+          },
+          {
+            id: 'mum-4',
+            name: 'Shree Siddhivinayak Temple',
+            category: 'Cultural & Temples',
+            area: 'Prabhadevi',
+            lat: 19.0169,
+            lng: 72.8304,
+            rating: 4.9,
+            reviewsCount: 104200,
+            cost: 'Free',
+            feeDetail: 'Free Darshan',
+            hours: '05:30 AM – 09:50 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Siddhivinayak Metro Line 3 (200m)',
+            verifiedBy: 'Temple Trust & BMC',
+            summary: 'Revered temple offering dedicated elevator and wheelchair assistance for senior citizens and differently-abled devotees.'
+          },
+          {
+            id: 'mum-5',
+            name: 'Pancham Puriwala (Heritage Pure Veg)',
+            category: 'Food & Dining',
+            area: 'Bora Bazar, Fort',
+            lat: 18.9383,
+            lng: 72.8342,
+            rating: 4.4,
+            reviewsCount: 12900,
+            cost: '₹',
+            feeDetail: '₹120–₹250 Thali',
+            hours: '08:00 AM – 10:30 PM',
+            wheelchair: false,
+            vegFriendly: true,
+            transit: 'Opposite CSMT Station (150m)',
+            verifiedBy: 'FSSAI Heritage Eatery',
+            summary: 'Operating since 1848, serving authentic pure-vegetarian North Indian & Maharashtrian thalis right outside CSMT.'
+          },
+          {
+            id: 'mum-6',
+            name: 'Dr. Bhau Daji Lad Mumbai City Museum',
+            category: 'Cultural & Temples',
+            area: 'Byculla East',
+            lat: 18.9791,
+            lng: 72.8348,
+            rating: 4.6,
+            reviewsCount: 9850,
+            cost: '₹',
+            feeDetail: '₹20 Indian / ₹100 Foreign',
+            hours: '10:00 AM – 06:00 PM (Closed Wed)',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Byculla Station (600m)',
+            verifiedBy: 'BMC & INTACH',
+            summary: 'Mumbai’s oldest museum showcasing decorative arts, historical city dioramas, and full ramp/lift accessibility.'
+          },
+          {
+            id: 'mum-7',
+            name: 'Asiatic Society Library & Horniman Circle',
+            category: 'Student / Budget',
+            area: 'Fort',
+            lat: 18.9322,
+            lng: 72.8364,
+            rating: 4.6,
+            reviewsCount: 8420,
+            cost: 'Free',
+            feeDetail: 'Free Steps & Garden',
+            hours: '10:30 AM – 06:30 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Hutatma Chowk Metro (300m)',
+            verifiedBy: 'Kala Ghoda Civic District',
+            summary: 'Neoclassical library steps and shaded circular park popular with researchers, architecture students, and readers.'
+          },
+          {
+            id: 'mum-8',
+            name: 'Hanging Gardens (Pherozeshah Mehta)',
+            category: 'Parks & Nature',
+            area: 'Malabar Hill',
+            lat: 18.9569,
+            lng: 72.8049,
+            rating: 4.4,
+            reviewsCount: 22100,
+            cost: 'Free',
+            feeDetail: 'Free Entry',
+            hours: '05:00 AM – 09:00 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Grant Road Station (2.4 km)',
+            verifiedBy: 'BMC Hydraulic & Gardens Dept',
+            summary: 'Terraced hilltop garden built over Mumbai’s main water reservoir offering sunset views over Girgaon Chowpatty.'
+          }
+        ],
+        alerts: [
+          {
+            id: 'al-mum-1',
+            type: 'Traffic Diversion',
+            severity: 'High',
+            location: 'DN Road & Hutatma Chowk Metro Corridor',
+            lat: 18.9345,
+            lng: 72.8339,
+            desc: 'Pedestrian plaza restoration work; BEST buses diverted via Shahid Bhagat Singh Road.',
+            source: 'BMC & Mumbai Traffic Police',
+            verifiedCount: 22,
+            status: 'Official Municipal'
+          },
+          {
+            id: 'al-mum-2',
+            type: 'Waterlogging',
+            severity: 'Moderate',
+            location: 'Hindmata Flyover Underpass, Dadar',
+            lat: 19.0072,
+            lng: 72.8421,
+            desc: 'High-tide stormwater pumping active; minor lane bottleneck near Southbound ramp.',
+            source: 'BMC Monsoon Cell',
+            verifiedCount: 9,
+            status: 'Community Verified'
+          }
+        ]
+      },
+
+      nagpur: {
+        id: 'nagpur',
+        name: 'Nagpur',
+        marathiName: 'नागपूर',
+        municipalBody: 'NMC (Nagpur Municipal Corporation)',
+        shortBody: 'NMC',
+        center: [21.1458, 79.0882],
+        zoom: 13,
+        telemetry: {
+          aqi: '68 (Satisfactory)',
+          transitStatus: 'MahaMetro Orange & Aqua Lines',
+          emergencyHelpline: '0712-2567021',
+          activeWorks: 'Zero Mile Plaza Upgrade'
+        },
+        quickPrompts: [
+          'Metro-connected sightseeing in Nagpur',
+          'Best Saoji & pure veg spots in Nagpur',
+          'Wheelchair friendly parks & monuments'
+        ],
+        places: [
+          {
+            id: 'nag-1',
+            name: 'Deekshabhoomi Stupa',
+            category: 'Cultural & Temples',
+            area: 'South Ambazari Road',
+            lat: 21.1282,
+            lng: 79.0669,
+            rating: 4.8,
+            reviewsCount: 34200,
+            cost: 'Free',
+            feeDetail: 'Free Entry',
+            hours: '06:00 AM – 09:00 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Deekshabhoomi Metro Station (400m)',
+            verifiedBy: 'State Tourism & NMC',
+            summary: 'Architectural marvel and sacred monument of social equality featuring wide marble ramps, tranquil gardens, and museum.'
+          },
+          {
+            id: 'nag-2',
+            name: 'Zero Mile Freedom Park & Metro Hub',
+            category: 'Historical',
+            area: 'Sitabuldi',
+            lat: 21.1498,
+            lng: 79.0806,
+            rating: 4.5,
+            reviewsCount: 15800,
+            cost: 'Free',
+            feeDetail: 'Free Public Park',
+            hours: '06:00 AM – 10:00 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Zero Mile Freedom Park Metro (50m)',
+            verifiedBy: 'MahaMetro Nagpur',
+            summary: 'Geographical center milestone of British India integrated with an amphitheater, heritage stone pillar, and Metro concourse.'
+          },
+          {
+            id: 'nag-3',
+            name: 'Futala Lake & Musical Promenade',
+            category: 'Parks & Nature',
+            area: 'Bharat Nagar',
+            lat: 21.1525,
+            lng: 79.0436,
+            rating: 4.6,
+            reviewsCount: 28900,
+            cost: 'Free',
+            feeDetail: 'Free Waterfront',
+            hours: '05:30 AM – 11:00 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Subhash Nagar Metro (1.9 km)',
+            verifiedBy: 'NIT & NMC',
+            summary: '200-year-old historic lake with illuminated stone promenade, street food kiosks, and evening fountain shows.'
+          },
+          {
+            id: 'nag-4',
+            name: 'Haldiram’s Planet Food (Pure Veg)',
+            category: 'Food & Dining',
+            area: 'Sitabuldi / Abhyankar Nagar',
+            lat: 21.1426,
+            lng: 79.0785,
+            rating: 4.5,
+            reviewsCount: 19400,
+            cost: '₹₹',
+            feeDetail: '₹200–₹450 per person',
+            hours: '08:00 AM – 11:00 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Sitabuldi Interchange Metro (300m)',
+            verifiedBy: 'FSSAI Nagpur',
+            summary: 'Nagpur’s flagship pure-vegetarian culinary destination famous for Orange Barfi, Raj Kachori, and hygienic family dining.'
+          },
+          {
+            id: 'nag-5',
+            name: 'Ambazari Biodiversity Park & Lake',
+            category: 'Parks & Nature',
+            area: 'Ambazari',
+            lat: 21.1268,
+            lng: 79.0422,
+            rating: 4.5,
+            reviewsCount: 12100,
+            cost: '₹',
+            feeDetail: '₹20 Entry',
+            hours: '06:00 AM – 06:30 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Subhash Nagar Metro (850m)',
+            verifiedBy: 'Maharashtra Forest Dept',
+            summary: 'Lush lakeside woodland trail home to 200+ butterfly and bird species with paved sensory pathways.'
+          },
+          {
+            id: 'nag-6',
+            name: 'Raman Science Centre & Planetarium',
+            category: 'Student / Budget',
+            area: 'Subhash Road, Empress City',
+            lat: 21.1456,
+            lng: 79.0928,
+            rating: 4.6,
+            reviewsCount: 14700,
+            cost: '₹',
+            feeDetail: '₹40 General / ₹15 Student',
+            hours: '09:30 AM – 06:00 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Agrasen Chowk Metro (650m)',
+            verifiedBy: 'NCSM Govt of India',
+            summary: 'Interactive science galleries, prehistoric park, and 3D planetarium shows opposite Gandhi Sagar Lake.'
+          },
+          {
+            id: 'nag-7',
+            name: 'Sitabuldi Fort & Civic Plaza',
+            category: 'Historical',
+            area: 'Sitabuldi Hill',
+            lat: 21.1462,
+            lng: 79.0831,
+            rating: 4.4,
+            reviewsCount: 6820,
+            cost: 'Free',
+            feeDetail: 'Free (Open Sundays & National Days)',
+            hours: '09:00 AM – 04:00 PM (Sun)',
+            wheelchair: false,
+            vegFriendly: true,
+            transit: 'Sitabuldi Metro Interchange (250m)',
+            verifiedBy: 'Indian Army & NMC',
+            summary: 'Historic twin-hillock fortification from 1817 commanding panoramic views over central Nagpur.'
+          },
+          {
+            id: 'nag-8',
+            name: 'Nagpur Central Railway & Metro Skywalk',
+            category: 'Public Facilities',
+            area: 'Cotton Market',
+            lat: 21.1516,
+            lng: 79.0891,
+            rating: 4.3,
+            reviewsCount: 11200,
+            cost: 'Free',
+            feeDetail: 'Public Transit Facility',
+            hours: '24 Hours',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Nagpur Junction & Metro Station',
+            verifiedBy: 'Central Railway & NMC',
+            summary: 'Central India’s primary rail-to-metro skywalk hub equipped with elevators, drinking water ATMs, and tourist helpdesk.'
+          }
+        ],
+        alerts: [
+          {
+            id: 'al-nag-1',
+            type: 'Traffic Diversion',
+            severity: 'Moderate',
+            location: 'Variety Square to Jhansi Rani Square',
+            lat: 21.1438,
+            lng: 79.0812,
+            desc: 'Smart streetscape paving; use Sitabuldi Metro skywalk for seamless pedestrian crossing.',
+            source: 'NMC Smart City Cell',
+            verifiedCount: 11,
+            status: 'Official Municipal'
+          },
+          {
+            id: 'al-nag-2',
+            type: 'Road Hazard / Pothole',
+            severity: 'Moderate',
+            location: 'North Ambazari Road near LIT',
+            lat: 21.1475,
+            lng: 79.0545,
+            desc: 'Resurfacing patch in progress on left lane; cyclists advised caution.',
+            source: 'Citizen Report #108',
+            verifiedCount: 4,
+            status: 'Community Verified'
+          }
+        ]
+      },
+
+      nashik: {
+        id: 'nashik',
+        name: 'Nashik',
+        marathiName: 'नाशिक',
+        municipalBody: 'NMC (Nashik Municipal Corporation)',
+        shortBody: 'Nashik MC',
+        center: [20.0059, 73.7897],
+        zoom: 13,
+        telemetry: {
+          aqi: '61 (Good)',
+          transitStatus: 'Citilinc E-Bus Network',
+          emergencyHelpline: '1800-233-4455',
+          activeWorks: 'Godavari Ghat Smart Riverfront'
+        },
+        quickPrompts: [
+          'Wheelchair-accessible ghats & temples in Nashik',
+          'Best Misal Pav & pure veg spots in Nashik',
+          'Half-day heritage & nature itinerary'
+        ],
+        places: [
+          {
+            id: 'nas-1',
+            name: 'Ramkund & Godavari Riverfront',
+            category: 'Cultural & Temples',
+            area: 'Panchavati',
+            lat: 20.0085,
+            lng: 73.7924,
+            rating: 4.7,
+            reviewsCount: 38500,
+            cost: 'Free',
+            feeDetail: 'Free Public Ghat',
+            hours: '05:00 AM – 10:00 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Panchavati Citilinc Terminal (400m)',
+            verifiedBy: 'Nashik Smart City Development Corp',
+            summary: 'Sacred bathing ghat along the Godavari river upgraded with level stone promenades, solar lighting, and evening Ganga Aarti.'
+          },
+          {
+            id: 'nas-2',
+            name: 'Pandavleni Caves (Trirashmi)',
+            category: 'Historical',
+            area: 'Pathardi Phata, NH-3',
+            lat: 19.9412,
+            lng: 73.7485,
+            rating: 4.6,
+            reviewsCount: 21300,
+            cost: '₹',
+            feeDetail: '₹25 Indian / ₹300 Foreign',
+            hours: '08:00 AM – 05:30 PM',
+            wheelchair: false,
+            vegFriendly: true,
+            transit: 'Pathardi Phata Citilinc Stop (600m)',
+            verifiedBy: 'Archaeological Survey of India',
+            summary: '24 rock-cut Hinayana Buddhist caves dating from 1st century BCE featuring intricate inscriptions and valley vistas.'
+          },
+          {
+            id: 'nas-3',
+            name: 'Sadhana Chulivarchi Misal',
+            category: 'Food & Dining',
+            area: 'Satpur-Makhmalabad Link',
+            lat: 20.0254,
+            lng: 73.7512,
+            rating: 4.5,
+            reviewsCount: 16900,
+            cost: '₹',
+            feeDetail: '₹130–₹200 per person',
+            hours: '07:30 AM – 03:30 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Gangapur Road Bus Corridor (1.2 km)',
+            verifiedBy: 'FSSAI & Nashik Culinary Guide',
+            summary: 'Open-air rural courtyard serving Nashik’s signature wood-fired pure-vegetarian Misal Pav with jalebi and mattha.'
+          },
+          {
+            id: 'nas-4',
+            name: 'Kalaram Temple (Panchavati)',
+            category: 'Cultural & Temples',
+            area: 'Panchavati',
+            lat: 20.0076,
+            lng: 73.7962,
+            rating: 4.8,
+            reviewsCount: 24700,
+            cost: 'Free',
+            feeDetail: 'Free Darshan',
+            hours: '05:30 AM – 09:30 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Panchavati Bus Stop (350m)',
+            verifiedBy: 'Heritage Conservation Trust',
+            summary: '1792 black-basalt temple complex celebrated for its Nagara architecture and pivotal role in Dr. B.R. Ambedkar’s 1930 temple entry movement.'
+          },
+          {
+            id: 'nas-5',
+            name: 'Gangapur Dam Backwaters & Bird Point',
+            category: 'Parks & Nature',
+            area: 'Gangapur Village',
+            lat: 20.0365,
+            lng: 73.6894,
+            rating: 4.5,
+            reviewsCount: 13400,
+            cost: 'Free',
+            feeDetail: 'Free Scenic Viewpoint',
+            hours: '06:00 AM – 06:30 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Gangapur Citilinc Route 104',
+            verifiedBy: 'Maharashtra Water Resources Dept',
+            summary: 'Serene earthen dam reservoir attracting migratory flamingos, pelicans, and sunset walkers.'
+          },
+          {
+            id: 'nas-6',
+            name: 'Kusumagraj Smarak & Library',
+            category: 'Student / Budget',
+            area: 'Gangapur Road',
+            lat: 20.0042,
+            lng: 73.7675,
+            rating: 4.7,
+            reviewsCount: 5400,
+            cost: 'Free',
+            feeDetail: 'Free Cultural Center',
+            hours: '10:00 AM – 08:00 PM',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Vidya Vikas Circle Stop (200m)',
+            verifiedBy: 'Kusumagraj Pratishthan',
+            summary: 'Memorial library, art gallery, and literary garden honoring Jnanpith laureate V.V. Shirwadkar (Kusumagraj).'
+          },
+          {
+            id: 'nas-7',
+            name: 'Coin Museum (IIRNS)',
+            category: 'Historical',
+            area: 'Anjaneri Hill Base',
+            lat: 19.9348,
+            lng: 73.5752,
+            rating: 4.4,
+            reviewsCount: 4120,
+            cost: '₹',
+            feeDetail: '₹20 Entry',
+            hours: '10:00 AM – 05:00 PM (Closed Sun)',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Trimbak Road Citilinc Bus',
+            verifiedBy: 'Indian Institute of Research in Numismatic Studies',
+            summary: 'Asia’s only dedicated numismatic museum displaying ancient Satavahana, Maratha, and Mughal coinage.'
+          },
+          {
+            id: 'nas-8',
+            name: 'CBS Smart E-Bus & Civic Mobility Hub',
+            category: 'Public Facilities',
+            area: 'Old Agra Road, CBS',
+            lat: 19.9975,
+            lng: 73.7842,
+            rating: 4.3,
+            reviewsCount: 7900,
+            cost: 'Free',
+            feeDetail: 'Public Civic Hub',
+            hours: '24 Hours',
+            wheelchair: true,
+            vegFriendly: true,
+            transit: 'Central Bus Stand (CBS)',
+            verifiedBy: 'Nashik Mahanagar Parivahan',
+            summary: 'Zero-emission electric bus hub connecting Panchavati, Nashik Road Station, and Trimbakeshwar with accessible boarding bays.'
+          }
+        ],
+        alerts: [
+          {
+            id: 'al-nas-1',
+            type: 'Traffic Diversion',
+            severity: 'Moderate',
+            location: 'Holkar Bridge to Ramkund Approach',
+            lat: 20.0068,
+            lng: 73.7905,
+            desc: 'Pedestrian-only zone enforced during evening Godavari Aarti (6:30 PM – 8:30 PM).',
+            source: 'Nashik Traffic Police',
+            verifiedCount: 16,
+            status: 'Official Municipal'
+          },
+          {
+            id: 'al-nas-2',
+            type: 'Broken Footpath',
+            severity: 'Advisory',
+            location: 'College Road near Kulkarni Garden',
+            lat: 20.0052,
+            lng: 73.7632,
+            desc: 'Cycle track bollard realignment in progress; pedestrians use inner walkway.',
+            source: 'Citizen Report #219',
+            verifiedCount: 3,
+            status: 'Community Verified'
+          }
+        ]
+      }
+    };
+
+    // Bilingual UI Strings (English / मराठी)
+    const I18N = {
+      en: {
+        appTitle: 'City Life — Maharashtra',
+        reportBtn: 'Report Issue',
+        aiGuideTitle: 'Ask City Helper',
+        activeAlertsTitle: 'Live Road & Safety Alerts'
+      },
+      mr: {
+        appTitle: 'सिटी लाईफ — महाराष्ट्र',
+        reportBtn: 'समस्या नोंदवा',
+        aiGuideTitle: 'शहर मदतनीस (AI)',
+        activeAlertsTitle: 'रस्ते व सुरक्षितता सूचना'
+      }
+    };
+
+    // =========================================================================
+    // 2. APPLICATION STATE & LOCALSTORAGE PERSISTENCE
+    // =========================================================================
+    let state = {
+      currentCity: 'pune',
+      activeMainTab: 'map', // 'map' | 'places' | 'help'
+      lang: 'en',
+      darkMode: false,
+      category: 'All',
+      mapCategoryFilter: 'All',
+      mapBaseLayer: 'street',
+      wheelchairOnly: false,
+      vegOnly: false,
+      showHazards: true,
+      isPickingPin: false,
+      aiMode: 'gemini',
+      drawerMode: 'closed', // 'closed' | 'place' | 'directions'
+      selectedPlaceId: null,
+      travelMode: 'drive', // 'drive' | 'transit' | 'walk' | 'cycle'
+      routeOriginId: null,
+      routeDestId: null,
+      avoidHazards: true,
+      compareList: [],
+      savedPlaces: [],
+      userReports: {}, // { cityId: [ ...reports ] }
+      upvotedIds: []
+    };
+
+    let map = null;
+    let baseTileLayer = null;
+    let labelOverlayLayer = null;
+    let placesLayerGroup = null;
+    let hazardsLayerGroup = null;
+    let routeLayerGroup = null;
+    let userLocationLayerGroup = null;
+    let droppedPinLayerGroup = null;
+
+    function loadPersistedState() {
+      try {
+        const savedReports = localStorage.getItem('mh_civic_reports_v2');
+        const savedUpvotes = localStorage.getItem('mh_civic_upvotes_v2');
+        const savedBookmarks = localStorage.getItem('mh_civic_bookmarks_v2');
+        if (savedReports) state.userReports = JSON.parse(savedReports);
+        if (savedUpvotes) state.upvotedIds = JSON.parse(savedUpvotes);
+        if (savedBookmarks) state.savedPlaces = JSON.parse(savedBookmarks);
+      } catch (e) {
+        console.warn('LocalStorage unavailable:', e);
+      }
+    }
+
+    function savePersistedState() {
+      try {
+        localStorage.setItem('mh_civic_reports_v2', JSON.stringify(state.userReports));
+        localStorage.setItem('mh_civic_upvotes_v2', JSON.stringify(state.upvotedIds));
+        localStorage.setItem('mh_civic_bookmarks_v2', JSON.stringify(state.savedPlaces));
+      } catch (e) {
+        console.warn('LocalStorage write skipped:', e);
+      }
+    }
+
+    function getCityAlerts(cityKey) {
+      const baseAlerts = MAHARASHTRA_DATA[cityKey].alerts || [];
+      const customAlerts = state.userReports[cityKey] || [];
+      return [...customAlerts, ...baseAlerts];
+    }
+
+    // Simple 3-Tab View Switcher so the screen never feels crowded
+    function switchMainTab(tabName) {
+      state.activeMainTab = tabName;
+      ['map', 'places', 'help'].forEach(t => {
+        const section = document.getElementById(`view-tab-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (section) section.classList.toggle('hidden', t !== tabName);
+        if (btn) {
+          if (t === tabName) {
+            btn.className = 'px-3.5 py-2 rounded-lg text-xs sm:text-sm font-extrabold bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-xs flex items-center justify-center gap-1.5 transition';
+          } else {
+            btn.className = 'px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 flex items-center justify-center gap-1.5 transition';
+          }
+        }
+      });
+
+      const hints = {
+        map: '👆 Tap any pin on the map to see details & directions.',
+        places: '📋 Filter places below and tap "Show on Map" to locate.',
+        help: '💬 Ask a question or check road diversions in your city.'
+      };
+      const hintEl = document.getElementById('simple-step-hint');
+      if (hintEl) hintEl.textContent = hints[tabName] || '';
+
+      if (tabName === 'map' && map) {
+        setTimeout(() => map.invalidateSize(), 120);
+      }
+    }
+
+    // =========================================================================
+    // 3. INITIALIZATION & CITY SWITCHING (WITH SEO URL HASH & DYNAMIC META)
+    // =========================================================================
+    window.onload = function () {
+      try {
+        loadPersistedState();
+        initMap();
+        renderCitySwitcher();
+        renderMapCategoryChips();
+        renderCategoryPills();
+
+        // Support SEO deep-link hash (#pune, #mumbai, #nagpur, #nashik)
+        const hashCity = (window.location.hash || '').replace('#', '').toLowerCase();
+        const initialCity = MAHARASHTRA_DATA[hashCity] ? hashCity : 'pune';
+        switchCity(initialCity, true);
+        switchMainTab('map');
+        if (window.lucide) lucide.createIcons();
+      } catch (err) {
+        console.error('Initialization error:', err);
+        showToast('Recovered from initialization warning: ' + err.message, 'info');
+      }
+    };
+
+    window.addEventListener('hashchange', function () {
+      const hashCity = (window.location.hash || '').replace('#', '').toLowerCase();
+      if (MAHARASHTRA_DATA[hashCity] && hashCity !== state.currentCity) {
+        switchCity(hashCity);
+      }
+    });
+
+    function updateSeoMetadataForCity(city) {
+      document.title = `${city.name} Interactive Map, Safe Routes & Civic Guide — City Life Maharashtra`;
+      const descMeta = document.querySelector('meta[name="description"]');
+      if (descMeta) {
+        descMeta.setAttribute(
+          'content',
+          `Explore ${city.name} (${city.marathiName}) with an interactive map, live ${city.shortBody} road alerts, wheelchair-accessible landmarks, pure-veg eateries, and safe hazard-bypass routes.`
+        );
+      }
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', `#${city.id}`);
+      }
+    }
+
+    function renderCitySwitcher() {
+      const container = document.getElementById('city-switcher');
+      container.innerHTML = Object.values(MAHARASHTRA_DATA).map(city => {
+        const isActive = city.id === state.currentCity;
+        const label = state.lang === 'mr' ? city.marathiName : city.name;
+        return `
+          <a href="#${city.id}" onclick="switchCity('${city.id}'); return false;"
+            class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition whitespace-nowrap ${
+              isActive
+                ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+            }">
+            ${label}
+          </a>
+        `;
+      }).join('');
+    }
+
+    function switchCity(cityId, isInitial = false) {
+      state.currentCity = cityId;
+      state.compareList = [];
+      state.mapCategoryFilter = 'All';
+      updateCompareButton();
+      renderCitySwitcher();
+      renderMapCategoryChips();
+
+      const city = MAHARASHTRA_DATA[cityId];
+      updateSeoMetadataForCity(city);
+      const cityDisplay = state.lang === 'mr' ? `${city.marathiName} (${city.name})` : city.name;
+      const alertsCount = getCityAlerts(cityId).length;
+
+      document.getElementById('gmaps-search-input').placeholder = `Search ${city.name} places, metro, food...`;
+      document.getElementById('gmaps-search-input').value = '';
+      document.getElementById('gmaps-autocomplete').classList.add('hidden');
+      document.getElementById('directory-title').textContent = `Best Places to Visit in ${cityDisplay}`;
+      document.getElementById('municipal-body-badge').textContent = `${city.shortBody} Live`;
+      document.getElementById('header-helpline-chip').textContent = `Helpline: ${city.telemetry.emergencyHelpline}`;
+      document.getElementById('tab-alerts-pill').textContent = alertsCount;
+
+      // Default route endpoints for this city
+      state.routeOriginId = city.places[0]?.id || null;
+      state.routeDestId = city.places[2]?.id || city.places[1]?.id || null;
+
+      // Update Telemetry Cards
+      renderTelemetryCards(city);
+
+      // Update Map View & Layers
+      if (map) {
+        map.flyTo(city.center, city.zoom, { duration: isInitial ? 0.1 : 1.0 });
+        routeLayerGroup.clearLayers();
+        droppedPinLayerGroup.clearLayers();
+        renderMapMarkers();
+      }
+
+      // Close left drawer on city change
+      closeMapDrawer();
+
+      // Render Alerts Feed & Directory
+      renderAlertsFeed();
+      renderPlacesGrid();
+      resetAiChatForCity(city);
+
+      lucide.createIcons();
+    }
+
+    function renderTelemetryCards(city) {
+      const alerts = getCityAlerts(city.id);
+      const accessibleCount = city.places.filter(p => p.wheelchair).length;
+      const cards = [
+        {
+          label: 'Municipal Authority',
+          value: city.shortBody,
+          sub: city.municipalBody.split('(')[1]?.replace(')', '') || city.municipalBody,
+          icon: 'landmark',
+          color: 'text-blue-600 bg-blue-50 dark:bg-blue-950/70'
+        },
+        {
+          label: 'Air Quality & Transit',
+          value: city.telemetry.aqi,
+          sub: city.telemetry.transitStatus,
+          icon: 'train-front',
+          color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/70'
+        },
+        {
+          label: 'Accessible Venues',
+          value: `${accessibleCount} / ${city.places.length} Verified`,
+          sub: 'Step-free & barrier-checked',
+          icon: 'accessibility',
+          color: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950/70'
+        },
+        {
+          label: 'Active Civic Advisories',
+          value: `${alerts.length} Active`,
+          sub: `Helpline: ${city.telemetry.emergencyHelpline}`,
+          icon: 'shield-alert',
+          color: 'text-rose-600 bg-rose-50 dark:bg-rose-950/70'
+        }
+      ];
+
+      document.getElementById('telemetry-cards').innerHTML = cards.map(c => `
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 sm:p-4 shadow-sm flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl ${c.color} flex items-center justify-center shrink-0">
+            <i data-lucide="${c.icon}" class="w-4 h-4"></i>
+          </div>
+          <div class="min-w-0">
+            <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">${c.label}</p>
+            <p class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white truncate mt-0.5">${c.value}</p>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">${c.sub}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // =========================================================================
+    // 4. GOOGLE MAPS-STYLE LEAFLET MAP, LAYERS SWITCHER & TEARDROP MARKERS
+    // =========================================================================
+    function initMap() {
+      const mapEl = document.getElementById('civic-map');
+      if (!mapEl) return;
+
+      map = L.map('civic-map', {
+        zoomControl: false, // Using custom bottom-right Google Maps zoom stack
+        scrollWheelZoom: true
+      }).setView([18.5204, 73.8567], 13);
+
+      setMapBaseLayer('street', true);
+
+      // Force Leaflet to recalculate container dimensions after layout paint
+      setTimeout(() => {
+        if (map) map.invalidateSize();
+      }, 250);
+
+      placesLayerGroup = L.layerGroup().addTo(map);
+      hazardsLayerGroup = L.layerGroup().addTo(map);
+      routeLayerGroup = L.layerGroup().addTo(map);
+      userLocationLayerGroup = L.layerGroup().addTo(map);
+      droppedPinLayerGroup = L.layerGroup().addTo(map);
+
+      // Click-on-map handler for Citizen Pin Picking OR Dropping a Google Maps Pin
+      map.on('click', function (e) {
+        // Close autocomplete dropdown if open
+        document.getElementById('gmaps-autocomplete').classList.add('hidden');
+
+        if (state.isPickingPin) {
+          const { lat, lng } = e.latlng;
+          cancelMapPinPick();
+          dropGooglePinAt(lat, lng);
+          openReportModal(lat.toFixed(5), lng.toFixed(5));
+          showToast('Pinned coordinates on map! Complete your civic notice details.', 'info');
+        }
+      });
+
+      // Right-click (contextmenu) anywhere on map drops a classic Google Maps Red Pin!
+      map.on('contextmenu', function (e) {
+        const { lat, lng } = e.latlng;
+        dropGooglePinAt(lat, lng);
+      });
+    }
+
+    function dropGooglePinAt(lat, lng) {
+      droppedPinLayerGroup.clearLayers();
+      const redPinSvg = createTeardropPinHtml('#ea4335', '●');
+      const icon = L.divIcon({
+        html: redPinSvg,
+        className: 'teardrop-pin',
+        iconSize: [34, 44],
+        iconAnchor: [17, 42],
+        popupAnchor: [0, -38]
+      });
+
+      const marker = L.marker([lat, lng], { icon }).addTo(droppedPinLayerGroup);
+      marker.bindPopup(`
+        <div class="p-1.5 min-w-[200px]">
+          <div class="flex items-center gap-1.5 text-rose-600 font-extrabold text-xs mb-1">
+            <span>📍 Dropped Map Pin</span>
+          </div>
+          <p class="font-mono-code text-[11px] text-slate-500 mb-2">${lat.toFixed(5)}, ${lng.toFixed(5)}</p>
+          <div class="flex flex-col gap-1.5">
+            <button onclick="openReportModal('${lat.toFixed(5)}', '${lng.toFixed(5)}')" class="w-full py-1.5 px-2.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition">
+              Report Civic Hazard Here
+            </button>
+            <button onclick="droppedPinLayerGroup.clearLayers()" class="w-full py-1 px-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-semibold">
+              Remove Pin
+            </button>
+          </div>
+        </div>
+      `).openPopup();
+    }
+
+    function toggleLayersPopover() {
+      document.getElementById('gmaps-layers-popover').classList.toggle('hidden');
+    }
+
+    function setMapBaseLayer(layerType, skipToast = false) {
+      state.mapBaseLayer = layerType;
+      if (!map) return;
+
+      if (baseTileLayer) map.removeLayer(baseTileLayer);
+      if (labelOverlayLayer) {
+        map.removeLayer(labelOverlayLayer);
+        labelOverlayLayer = null;
+      }
+
+      if (layerType === 'street') {
+        // 100% Free, Keyless OpenStreetMap Standard Street Tiles (Never requires API Key)
+        baseTileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors',
+          maxZoom: 19
+        }).addTo(map);
+        document.getElementById('layers-thumb-bg').className = 'absolute inset-0 bg-gradient-to-br from-emerald-100 via-amber-50 to-blue-200';
+      } else if (layerType === 'satellite') {
+        // Keyless Esri World Imagery + OpenStreetMap Label Overlay
+        baseTileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Tiles &copy; Esri',
+          maxZoom: 19
+        }).addTo(map);
+        labelOverlayLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png', {
+          subdomains: 'abcd',
+          maxZoom: 19
+        }).addTo(map);
+        document.getElementById('layers-thumb-bg').className = 'absolute inset-0 bg-gradient-to-br from-emerald-950 via-teal-950 to-slate-950';
+      } else if (layerType === 'terrain') {
+        // Keyless Topographic Relief Map
+        baseTileLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenTopoMap',
+          maxZoom: 17
+        }).addTo(map);
+        document.getElementById('layers-thumb-bg').className = 'absolute inset-0 bg-gradient-to-br from-lime-200 via-stone-200 to-amber-200';
+      } else if (layerType === 'dark') {
+        baseTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; OpenStreetMap &copy; CARTO',
+          subdomains: 'abcd',
+          maxZoom: 19
+        }).addTo(map);
+        document.getElementById('layers-thumb-bg').className = 'absolute inset-0 bg-slate-900';
+      }
+
+      // Automatic fallback to OpenStreetMap if any external tile server is blocked
+      baseTileLayer.on('tileerror', function () {
+        if (state.mapBaseLayer !== 'street') {
+          setMapBaseLayer('street', true);
+        }
+      });
+
+      // Highlight selected layer option card
+      document.querySelectorAll('.layer-opt').forEach(btn => {
+        btn.classList.remove('border-blue-600', 'bg-blue-50/50', 'dark:bg-blue-950/40');
+        btn.classList.add('border-transparent');
+      });
+      const activeOpt = document.getElementById(`layer-opt-${layerType}`);
+      if (activeOpt) {
+        activeOpt.classList.remove('border-transparent');
+        activeOpt.classList.add('border-blue-600', 'bg-blue-50/50', 'dark:bg-blue-950/40');
+      }
+
+      if (!skipToast) {
+        document.getElementById('gmaps-layers-popover').classList.add('hidden');
+      }
+    }
+
+    // Classic Google Maps SVG Teardrop Pin Generator
+    function createTeardropPinHtml(colorHex, glyphText) {
+      return `
+        <svg width="34" height="44" viewBox="0 0 34 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 1C8.71573 1 2 7.71573 2 16C2 26.5 17 42.5 17 42.5C17 42.5 32 26.5 32 16C32 7.71573 25.2843 1 17 1Z" fill="${colorHex}" stroke="white" stroke-width="2"/>
+          <circle cx="17" cy="16" r="6.5" fill="white"/>
+          <text x="17" y="19.5" text-anchor="middle" fill="${colorHex}" font-size="10" font-weight="800" font-family="Plus Jakarta Sans, sans-serif">${glyphText}</text>
+        </svg>
+      `;
+    }
+
+    function getGooglePinStyle(category) {
+      switch (category) {
+        case 'Food & Dining':
+          return { color: '#f59e0b', glyph: '🍴' };
+        case 'Parks & Nature':
+          return { color: '#10b981', glyph: '🌳' };
+        case 'Public Facilities':
+          return { color: '#0284c7', glyph: '🚇' };
+        case 'Cultural & Temples':
+          return { color: '#ea580c', glyph: '🛕' };
+        case 'Student / Budget':
+          return { color: '#7c3aed', glyph: '🎓' };
+        default: // Historical
+          return { color: '#2563eb', glyph: '🏛' };
+      }
+    }
+
+    function renderMapMarkers() {
+      placesLayerGroup.clearLayers();
+      hazardsLayerGroup.clearLayers();
+
+      const city = MAHARASHTRA_DATA[state.currentCity];
+      const alerts = getCityAlerts(state.currentCity);
+
+      document.getElementById('hazards-count-badge').textContent = `Road Alerts (${alerts.length})`;
+
+      // Filter places if a floating map chip is selected
+      const visiblePlaces = city.places.filter(p => {
+        if (state.mapCategoryFilter === 'All' || state.mapCategoryFilter === 'Civic Alerts') return true;
+        return p.category === state.mapCategoryFilter;
+      });
+
+      // 1. Classic Google Maps Teardrop Place Pins
+      if (state.mapCategoryFilter !== 'Civic Alerts') {
+        visiblePlaces.forEach(place => {
+          const pinStyle = getGooglePinStyle(place.category);
+          const customIcon = L.divIcon({
+            html: createTeardropPinHtml(pinStyle.color, pinStyle.glyph),
+            className: 'teardrop-pin',
+            iconSize: [34, 44],
+            iconAnchor: [17, 42],
+            popupAnchor: [0, -38]
+          });
+
+          const marker = L.marker([place.lat, place.lng], { icon: customIcon });
+          marker.bindTooltip(`<strong>${place.name}</strong> • ★ ${place.rating}`, {
+            direction: 'top',
+            offset: [0, -36]
+          });
+          marker.on('click', () => {
+            openPlaceDrawer(place.id);
+          });
+          placesLayerGroup.addLayer(marker);
+        });
+      }
+
+      // 2. Active Hazards & Traffic Diversions
+      if (state.showHazards || state.mapCategoryFilter === 'Civic Alerts') {
+        alerts.forEach(alert => {
+          const isHigh = alert.severity === 'High';
+          const ringColor = isHigh ? '#e11d48' : '#f59e0b';
+
+          const circle = L.circle([alert.lat, alert.lng], {
+            color: ringColor,
+            fillColor: ringColor,
+            fillOpacity: 0.16,
+            weight: 1.5,
+            radius: 360
+          });
+          hazardsLayerGroup.addLayer(circle);
+
+          const hazardIcon = L.divIcon({
+            html: `
+              <div class="relative flex items-center justify-center w-8 h-8">
+                <span style="background:${ringColor};" class="absolute inset-0 rounded-full hazard-pulse"></span>
+                <div style="background:${ringColor};" class="relative w-7 h-7 rounded-full border-2 border-white shadow-md flex items-center justify-center text-white font-extrabold text-xs">!</div>
+              </div>
+            `,
+            className: '',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16]
+          });
+
+          const marker = L.marker([alert.lat, alert.lng], { icon: hazardIcon });
+          marker.bindPopup(`
+            <div class="p-1.5 min-w-[215px]">
+              <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-rose-100 text-rose-700">${alert.type} (${alert.severity})</span>
+              <h4 class="font-bold text-sm mt-1">${alert.location}</h4>
+              <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">${alert.desc}</p>
+              <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-800">
+                <span class="text-[10px] font-mono-code text-slate-400">${alert.verifiedCount} confirmations</span>
+                <button onclick="upvoteAlert('${alert.id}')" class="text-[11px] font-bold text-blue-600 hover:underline">+ Confirm</button>
+              </div>
+            </div>
+          `);
+          hazardsLayerGroup.addLayer(marker);
+        });
+      }
+    }
+
+    function centerOnCity() {
+      const city = MAHARASHTRA_DATA[state.currentCity];
+      map.flyTo(city.center, city.zoom, { duration: 0.8 });
+    }
+
+    // Bottom-Right "Locate Me" Google Maps Blue Dot
+    function locateUserOnMap() {
+      const city = MAHARASHTRA_DATA[state.currentCity];
+      const showBlueDot = (lat, lng, label) => {
+        userLocationLayerGroup.clearLayers();
+        L.circle([lat, lng], {
+          color: '#2563eb',
+          fillColor: '#3b82f6',
+          fillOpacity: 0.15,
+          weight: 1,
+          radius: 250
+        }).addTo(userLocationLayerGroup);
+
+        const blueDotIcon = L.divIcon({
+          html: `
+            <div class="relative flex items-center justify-center w-6 h-6">
+              <span class="absolute inset-0 rounded-full bg-blue-500 hazard-pulse"></span>
+              <div class="relative w-4 h-4 rounded-full bg-blue-600 border-2 border-white shadow-md"></div>
+            </div>
+          `,
+          className: '',
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+
+        L.marker([lat, lng], { icon: blueDotIcon })
+          .addTo(userLocationLayerGroup)
+          .bindPopup(`<div class="text-xs font-bold p-1">🔵 ${label}</div>`)
+          .openPopup();
+
+        map.flyTo([lat, lng], 15, { duration: 0.9 });
+        showToast(label, 'info');
+      };
+
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            const { latitude, longitude } = pos.coords;
+            showBlueDot(latitude, longitude, 'Your Live GPS Location');
+          },
+          () => {
+            showBlueDot(city.center[0], city.center[1], `Simulated Location (${city.name} Central Hub)`);
+          },
+          { timeout: 4000 }
+        );
+      } else {
+        showBlueDot(city.center[0], city.center[1], `Simulated Location (${city.name} Central Hub)`);
+      }
+    }
+
+    function toggleHazardsLayer() {
+      state.showHazards = !state.showHazards;
+      const checkbox = document.getElementById('layer-hazards-checkbox');
+      if (checkbox) checkbox.checked = state.showHazards;
+      const btn = document.getElementById('toggle-hazards-btn');
+      btn.classList.toggle('opacity-55', !state.showHazards);
+      renderMapMarkers();
+    }
+
+    function startMapPinPick() {
+      switchMainTab('map');
+      state.isPickingPin = true;
+      document.getElementById('pin-pick-strip').classList.remove('hidden');
+      document.getElementById('civic-map').style.cursor = 'crosshair';
+    }
+
+    function cancelMapPinPick() {
+      state.isPickingPin = false;
+      document.getElementById('pin-pick-strip').classList.add('hidden');
+      document.getElementById('civic-map').style.cursor = '';
+    }
+
+    // =========================================================================
+    // 5. GOOGLE MAPS FLOATING SEARCH BAR, CATEGORY CHIPS & SLIDE-OVER DRAWER
+    // =========================================================================
+    const MAP_FLOATING_CHIPS = [
+      { id: 'All', label: 'All', icon: 'layers' },
+      { id: 'Food & Dining', label: 'Food', icon: 'utensils' },
+      { id: 'Historical', label: 'Heritage', icon: 'landmark' },
+      { id: 'Parks & Nature', label: 'Parks', icon: 'trees' },
+      { id: 'Public Facilities', label: 'Transit', icon: 'train-front' },
+      { id: 'Cultural & Temples', label: 'Temples', icon: 'sparkles' },
+      { id: 'Civic Alerts', label: 'Alerts', icon: 'alert-triangle' }
+    ];
+
+    function renderMapCategoryChips() {
+      const container = document.getElementById('gmaps-category-chips');
+      container.innerHTML = MAP_FLOATING_CHIPS.map(chip => {
+        const active = state.mapCategoryFilter === chip.id;
+        return `
+          <button onclick="selectMapChip('${chip.id}')"
+            class="shrink-0 px-3 py-1.5 rounded-full gmaps-shadow text-xs font-bold flex items-center gap-1.5 transition border ${
+              active
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200/80 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+            }">
+            <i data-lucide="${chip.icon}" class="w-3.5 h-3.5 ${active ? 'text-white' : chip.id === 'Civic Alerts' ? 'text-rose-500' : 'text-blue-600'}"></i>
+            <span>${chip.label}</span>
+          </button>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function selectMapChip(chipId) {
+      state.mapCategoryFilter = chipId;
+      renderMapCategoryChips();
+      renderMapMarkers();
+    }
+
+    function handleMapSearchInput() {
+      const input = document.getElementById('gmaps-search-input');
+      const clearBtn = document.getElementById('gmaps-search-clear');
+      const dropdown = document.getElementById('gmaps-autocomplete');
+      const q = input.value.trim().toLowerCase();
+
+      clearBtn.classList.toggle('hidden', q.length === 0);
+
+      const city = MAHARASHTRA_DATA[state.currentCity];
+      const alerts = getCityAlerts(state.currentCity);
+
+      const matchingPlaces = city.places.filter(p =>
+        !q || `${p.name} ${p.area} ${p.category} ${p.transit}`.toLowerCase().includes(q)
+      ).slice(0, 5);
+
+      const matchingAlerts = alerts.filter(a =>
+        q && `${a.type} ${a.location} ${a.desc}`.toLowerCase().includes(q)
+      ).slice(0, 2);
+
+      if (matchingPlaces.length === 0 && matchingAlerts.length === 0) {
+        dropdown.innerHTML = `<div class="p-3.5 text-xs text-slate-500">No places or alerts found in ${city.name} for "${escapeHtml(input.value)}".</div>`;
+        dropdown.classList.remove('hidden');
+        return;
+      }
+
+      dropdown.innerHTML = `
+        ${matchingPlaces.map(p => `
+          <button type="button" onclick="selectSearchPlace('${p.id}')" class="w-full text-left px-3.5 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3 transition">
+            <div class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 text-blue-600">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="text-xs font-bold text-slate-900 dark:text-white truncate">${p.name}</p>
+              <p class="text-[11px] text-slate-500 truncate">${p.area} • ${p.category}</p>
+            </div>
+            <span class="text-[11px] font-bold text-amber-500 shrink-0">★ ${p.rating}</span>
+          </button>
+        `).join('')}
+        ${matchingAlerts.map(a => `
+          <button type="button" onclick="focusAlertOnMap(${a.lat}, ${a.lng})" class="w-full text-left px-3.5 py-2.5 bg-rose-50/40 dark:bg-rose-950/20 hover:bg-rose-50 dark:hover:bg-rose-950/40 flex items-center gap-3 transition">
+            <div class="w-7 h-7 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+              <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="text-xs font-bold text-rose-700 dark:text-rose-400 truncate">${a.type} — ${a.location}</p>
+              <p class="text-[11px] text-slate-500 truncate">${a.desc}</p>
+            </div>
+          </button>
+        `).join('')}
+      `;
+
+      dropdown.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function clearMapSearch() {
+      document.getElementById('gmaps-search-input').value = '';
+      document.getElementById('gmaps-search-clear').classList.add('hidden');
+      document.getElementById('gmaps-autocomplete').classList.add('hidden');
+    }
+
+    function selectSearchPlace(placeId) {
+      document.getElementById('gmaps-autocomplete').classList.add('hidden');
+      openPlaceDrawer(placeId);
+    }
+
+    function focusAlertOnMap(lat, lng) {
+      document.getElementById('gmaps-autocomplete').classList.add('hidden');
+      map.flyTo([lat, lng], 16, { duration: 0.8 });
+    }
+
+    function closeMapDrawer() {
+      state.drawerMode = 'closed';
+      document.getElementById('gmaps-left-drawer').classList.add('hidden');
+    }
+
+    // GOOGLE MAPS PLACE DETAILS SHEET (LEFT SLIDE-OVER DRAWER)
+    function openPlaceDrawer(placeId) {
+      const city = MAHARASHTRA_DATA[state.currentCity];
+      const place = city.places.find(p => p.id === placeId) || city.places[0];
+      state.selectedPlaceId = place.id;
+      state.drawerMode = 'place';
+
+      const isSaved = state.savedPlaces.includes(place.id);
+      const pinStyle = getGooglePinStyle(place.category);
+
+      map.flyTo([place.lat, place.lng], 15, { duration: 0.8 });
+
+      document.getElementById('drawer-header-label').textContent = `${city.name} • Place Sheet`;
+      document.getElementById('gmaps-drawer-content').innerHTML = `
+        <!-- Banner Header -->
+        <div class="relative h-36 bg-gradient-to-br from-blue-600 via-indigo-700 to-slate-900 p-4 flex flex-col justify-end text-white">
+          <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-xs text-[11px] font-bold">
+            ${pinStyle.glyph} ${place.category}
+          </div>
+          <h3 class="text-lg font-extrabold leading-tight">${place.name}</h3>
+          <div class="flex items-center gap-2 text-xs mt-1 text-blue-100">
+            <span class="font-bold text-amber-300">${place.rating} ★★★★★</span>
+            <span>(${place.reviewsCount.toLocaleString()})</span>
+            <span>•</span>
+            <span>${place.cost}</span>
+          </div>
+        </div>
+
+        <!-- Google Maps 4-Button Action Bar: Directions, Save, Share, Report -->
+        <div class="grid grid-cols-4 gap-1 px-3 py-3 border-b border-slate-100 dark:border-slate-800 text-center">
+          <button onclick="openDirectionsDrawer('${place.id}')" class="flex flex-col items-center gap-1 group">
+            <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-sm group-hover:bg-blue-500 transition">
+              <i data-lucide="corner-up-right" class="w-4 h-4"></i>
+            </div>
+            <span class="text-[11px] font-bold text-blue-600 dark:text-blue-400">Directions</span>
+          </button>
+
+          <button onclick="toggleSavePlace('${place.id}')" class="flex flex-col items-center gap-1 group">
+            <div class="w-9 h-9 rounded-full border ${isSaved ? 'bg-amber-50 border-amber-400 text-amber-600' : 'border-slate-200 dark:border-slate-700 text-blue-600 dark:text-blue-400'} flex items-center justify-center group-hover:bg-slate-50 dark:group-hover:bg-slate-800 transition">
+              <i data-lucide="bookmark" class="w-4 h-4"></i>
+            </div>
+            <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-300">${isSaved ? 'Saved' : 'Save'}</span>
+          </button>
+
+          <button onclick="sharePlaceLink('${place.name.replace(/'/g, "\\'")}', ${place.lat}, ${place.lng})" class="flex flex-col items-center gap-1 group">
+            <div class="w-9 h-9 rounded-full border border-slate-200 dark:border-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:bg-slate-50 dark:group-hover:bg-slate-800 transition">
+              <i data-lucide="share-2" class="w-4 h-4"></i>
+            </div>
+            <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Share</span>
+          </button>
+
+          <button onclick="openReportModal('${place.lat}', '${place.lng}')" class="flex flex-col items-center gap-1 group">
+            <div class="w-9 h-9 rounded-full border border-slate-200 dark:border-slate-700 text-rose-600 flex items-center justify-center group-hover:bg-rose-50 dark:group-hover:bg-rose-950/30 transition">
+              <i data-lucide="flag" class="w-4 h-4"></i>
+            </div>
+            <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Report</span>
+          </button>
+        </div>
+
+        <!-- Overview & Civic Metadata Rows (Google Maps style icon list) -->
+        <div class="p-4 space-y-3 text-xs">
+          <p class="text-slate-600 dark:text-slate-300 leading-relaxed">${place.summary}</p>
+
+          <div class="space-y-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <div class="flex items-start gap-3">
+              <i data-lucide="map-pin" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
+              <div>
+                <p class="font-semibold text-slate-800 dark:text-slate-100">${place.area}, ${city.name}, Maharashtra</p>
+                <p class="font-mono-code text-[10px] text-slate-400">${place.lat.toFixed(4)}° N, ${place.lng.toFixed(4)}° E</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <i data-lucide="clock" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+              <div>
+                <span class="font-bold text-emerald-600">Open</span> • <span class="text-slate-700 dark:text-slate-300">${place.hours}</span>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <i data-lucide="train-front" class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5"></i>
+              <div>
+                <p class="font-semibold text-slate-800 dark:text-slate-100">Nearest Public Transit</p>
+                <p class="text-slate-500">${place.transit}</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <i data-lucide="ticket" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+              <div>
+                <p class="font-semibold text-slate-800 dark:text-slate-100">Entry & Budget</p>
+                <p class="text-slate-500">${place.feeDetail}</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <i data-lucide="shield-check" class="w-4 h-4 text-teal-600 shrink-0 mt-0.5"></i>
+              <div>
+                <p class="font-semibold text-slate-800 dark:text-slate-100">Verified By</p>
+                <p class="text-slate-500">${place.verifiedBy}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accessibility & Amenity Chips -->
+          <div class="flex flex-wrap gap-1.5 pt-2">
+            <span class="px-2.5 py-1 rounded-lg font-bold ${place.wheelchair ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}">
+              ${place.wheelchair ? '♿ Wheelchair Accessible Entrance & Path' : '⚠️ Steps / Partial Accessibility'}
+            </span>
+            ${place.vegFriendly ? '<span class="px-2.5 py-1 rounded-lg font-bold bg-green-50 text-green-700 dark:bg-green-950/70 dark:text-green-300">🌿 Pure Veg / Vegetarian Friendly</span>' : ''}
+          </div>
+        </div>
+      `;
+
+      document.getElementById('gmaps-left-drawer').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function toggleSavePlace(placeId) {
+      const idx = state.savedPlaces.indexOf(placeId);
+      if (idx > -1) {
+        state.savedPlaces.splice(idx, 1);
+        showToast('Removed from Saved Places.', 'info');
+      } else {
+        state.savedPlaces.push(placeId);
+        showToast('Saved to your Maharashtra Civic Bookmarks!', 'success');
+      }
+      savePersistedState();
+      openPlaceDrawer(placeId);
+    }
+
+    function sharePlaceLink(name, lat, lng) {
+      const text = `${name} (${lat.toFixed(4)}, ${lng.toFixed(4)}) — Verified via City Life Maharashtra`;
+      const tempInput = document.createElement('input');
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      showToast('Location coordinates & civic link copied to clipboard!', 'success');
+    }
+
+    // =========================================================================
+    // 6. GOOGLE MAPS TURN-BY-TURN DIRECTIONS PANEL & HAZARD-AWARE ROUTING
+    // =========================================================================
+    function openDirectionsDrawer(destPlaceId = null) {
+      const city = MAHARASHTRA_DATA[state.currentCity];
+      state.drawerMode = 'directions';
+
+      if (destPlaceId) {
+        state.routeDestId = destPlaceId;
+        if (state.routeOriginId === destPlaceId) {
+          const alt = city.places.find(p => p.id !== destPlaceId);
+          if (alt) state.routeOriginId = alt.id;
+        }
+      }
+
+      document.getElementById('drawer-header-label').textContent = `${city.name} • Directions & Hazard Check`;
+      renderDirectionsPanel();
+      document.getElementById('gmaps-left-drawer').classList.remove('hidden');
+    }
+
+    function setDrawerTravelMode(mode) {
+      state.travelMode = mode;
+      renderDirectionsPanel();
+    }
+
+    function swapRouteEndpoints() {
+      const tmp = state.routeOriginId;
+      state.routeOriginId = state.routeDestId;
+      state.routeDestId = tmp;
+      renderDirectionsPanel();
+    }
+
+    function onDrawerRouteSelectChange() {
+      state.routeOriginId = document.getElementById('drawer-origin').value;
+      state.routeDestId = document.getElementById('drawer-dest').value;
+      state.avoidHazards = document.getElementById('drawer-avoid-hazards').checked;
+      renderDirectionsPanel();
+    }
+
+    function renderDirectionsPanel() {
+      const city = MAHARASHTRA_DATA[state.currentCity];
+      const origin = city.places.find(p => p.id === state.routeOriginId) || city.places[0];
+      const dest = city.places.find(p => p.id === state.routeDestId) || city.places[1];
+
+      const optionsHtml = (selectedId) =>
+        city.places.map(p => `<option value="${p.id}" ${p.id === selectedId ? 'selected' : ''}>${p.name} (${p.area})</option>`).join('');
+
+      const modes = [
+        { id: 'drive', label: 'Car/Auto', icon: 'car' },
+        { id: 'transit', label: 'Metro/Bus', icon: 'train-front' },
+        { id: 'walk', label: 'Walk', icon: 'footprints' },
+        { id: 'cycle', label: 'Bike', icon: 'bike' }
+      ];
+
+      // Compute Route & Hazard Intersections
+      routeLayerGroup.clearLayers();
+      const straightKm = haversineKm(origin.lat, origin.lng, dest.lat, dest.lng);
+      const alerts = getCityAlerts(state.currentCity);
+      const intersectingHazards = origin.id === dest.id
+        ? []
+        : alerts.filter(al => pointToSegmentKm(al.lat, al.lng, origin.lat, origin.lng, dest.lat, dest.lng) <= 0.65);
+
+      let routeCoords = [
+        [origin.lat, origin.lng],
+        [dest.lat, dest.lng]
+      ];
+      let detourFactor = 1.25;
+      let waypointNote = `Head along main arterial corridor toward ${dest.area}`;
+
+      if (intersectingHazards.length > 0 && state.avoidHazards && origin.id !== dest.id) {
+        const primaryHaz = intersectingHazards[0];
+        const midLat = (origin.lat + dest.lat) / 2;
+        const midLng = (origin.lng + dest.lng) / 2;
+        const dLat = dest.lat - origin.lat;
+        const dLng = dest.lng - origin.lng;
+        const offsetLat = midLat + (primaryHaz.lng > midLng ? -0.0065 : 0.0065) + dLng * 0.15;
+        const offsetLng = midLng + (primaryHaz.lat > midLat ? 0.0065 : -0.0065) - dLat * 0.15;
+
+        routeCoords = [
+          [origin.lat, origin.lng],
+          [offsetLat, offsetLng],
+          [dest.lat, dest.lng]
+        ];
+        detourFactor = 1.44;
+        waypointNote = `Take parallel civic bypass avoiding ${primaryHaz.location}`;
+      }
+
+      const effectiveKm = origin.id === dest.id ? 0 : Math.max(0.4, straightKm * detourFactor);
+      const speeds = { walk: 4.5, cycle: 14, transit: 24, drive: 22 };
+      const minutes = origin.id === dest.id ? 0 : Math.max(4, Math.round((effectiveKm / speeds[state.travelMode]) * 60));
+
+      if (origin.id !== dest.id) {
+        const lineColor = intersectingHazards.length > 0 && !state.avoidHazards ? '#e11d48' : '#1a73e8';
+        // Google Maps style outer casing + inner vibrant blue route line
+        L.polyline(routeCoords, { color: '#1e3a8a', weight: 8, opacity: 0.35 }).addTo(routeLayerGroup);
+        const poly = L.polyline(routeCoords, {
+          color: lineColor,
+          weight: 5,
+          opacity: 0.95,
+          dashArray: intersectingHazards.length > 0 && state.avoidHazards ? '9, 7' : null
+        }).addTo(routeLayerGroup);
+        map.fitBounds(poly.getBounds(), { padding: [70, 70] });
+      }
+
+      document.getElementById('gmaps-drawer-content').innerHTML = `
+        <div class="p-4 space-y-4">
+          <!-- Google Maps Travel Mode Icon Strip -->
+          <div class="grid grid-cols-4 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+            ${modes.map(m => {
+              const active = state.travelMode === m.id;
+              return `
+                <button onclick="setDrawerTravelMode('${m.id}')" class="py-1.5 rounded-lg flex flex-col items-center gap-0.5 text-[11px] font-bold transition ${
+                  active ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-700'
+                }">
+                  <i data-lucide="${m.icon}" class="w-3.5 h-3.5"></i>
+                  <span>${m.label}</span>
+                </button>
+              `;
+            }).join('')}
+          </div>
+
+          <!-- From -> To Inputs with Swap Button -->
+          <div class="flex items-center gap-2">
+            <div class="flex-1 space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full border-2 border-blue-600 shrink-0"></span>
+                <select id="drawer-origin" onchange="onDrawerRouteSelectChange()" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-2 text-xs font-semibold">
+                  ${optionsHtml(origin.id)}
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-600 shrink-0"></i>
+                <select id="drawer-dest" onchange="onDrawerRouteSelectChange()" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-2 text-xs font-semibold">
+                  ${optionsHtml(dest.id)}
+                </select>
+              </div>
+            </div>
+            <button onclick="swapRouteEndpoints()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500" title="Swap Starting Point & Destination">
+              <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Hazard-Free Bypass Toggle -->
+          <label class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 cursor-pointer text-xs">
+            <span class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+              Hazard-Free Bypass Route
+            </span>
+            <input type="checkbox" id="drawer-avoid-hazards" ${state.avoidHazards ? 'checked' : ''} onchange="onDrawerRouteSelectChange()" class="rounded text-blue-600 focus:ring-blue-500" />
+          </label>
+
+          <!-- Route Summary Banner -->
+          <div class="p-3.5 rounded-2xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-800/70 space-y-1.5">
+            <div class="flex items-baseline justify-between">
+              <span class="text-xl font-extrabold text-blue-700 dark:text-blue-400">${minutes} min</span>
+              <span class="text-xs font-bold text-slate-600 dark:text-slate-300">${effectiveKm.toFixed(1)} km</span>
+            </div>
+            <p class="text-[11px] font-semibold ${intersectingHazards.length > 0 && !state.avoidHazards ? 'text-rose-600' : 'text-emerald-700 dark:text-emerald-400'}">
+              ${
+                intersectingHazards.length === 0
+                  ? '✓ Fastest route • Clear of reported municipal hazards'
+                  : state.avoidHazards
+                  ? `✓ Safe Bypass Active • Avoided ${intersectingHazards.length} hazard(s)`
+                  : `⚠️ Caution: Route passes ${intersectingHazards[0].location}`
+              }
+            </p>
+          </div>
+
+          <!-- Turn-by-Turn Step-by-Step Directions -->
+          <div class="space-y-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+            <h4 class="font-extrabold text-slate-800 dark:text-slate-200 uppercase tracking-wider text-[11px]">Turn-by-Turn Steps</h4>
+            
+            <div class="flex items-start gap-2.5">
+              <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 mt-0.5 font-bold">1</div>
+              <div>
+                <p class="font-bold">Depart from ${origin.name}</p>
+                <p class="text-slate-500 text-[11px]">Board via ${origin.transit}</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-2.5">
+              <div class="w-6 h-6 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 flex items-center justify-center shrink-0 mt-0.5 font-bold">2</div>
+              <div>
+                <p class="font-bold">${waypointNote}</p>
+                <p class="text-slate-500 text-[11px]">Approx. ${(effectiveKm * 0.65).toFixed(1)} km • ${state.travelMode.toUpperCase()} corridor</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-2.5">
+              <div class="w-6 h-6 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 font-bold">3</div>
+              <div>
+                <p class="font-bold">Arrive at ${dest.name}</p>
+                <p class="text-slate-500 text-[11px]">${dest.wheelchair ? '♿ Step-free entrance available' : 'Check entry steps'} • ${dest.area}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      lucide.createIcons();
+    }
+
+    function haversineKm(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = ((lat2 - lat1) * Math.PI) / 180;
+      const dLon = ((lon2 - lon1) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((lat1 * Math.PI) / 180) *
+          Math.cos((lat2 * Math.PI) / 180) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function pointToSegmentKm(pLat, pLng, aLat, aLng, bLat, bLng) {
+      const x = pLng, y = pLat;
+      const x1 = aLng, y1 = aLat;
+      const x2 = bLng, y2 = bLat;
+      const A = x - x1;
+      const B = y - y1;
+      const C = x2 - x1;
+      const D = y2 - y1;
+      const dot = A * C + B * D;
+      const lenSq = C * C + D * D;
+      let param = lenSq !== 0 ? dot / lenSq : -1;
+      let xx, yy;
+      if (param < 0) { xx = x1; yy = y1; }
+      else if (param > 1) { xx = x2; yy = y2; }
+      else { xx = x1 + param * C; yy = y1 + param * D; }
+      return haversineKm(y, x, yy, xx);
+    }
+
+    // =========================================================================
+    // 7. HYBRID GEMINI AI + RULE-BASED CIVIC CONCIERGE
+    // =========================================================================
+    function toggleAiEngine() {
+      state.aiMode = state.aiMode === 'gemini' ? 'rules' : 'gemini';
+      const dot = document.getElementById('ai-engine-dot');
+      const label = document.getElementById('ai-engine-label');
+      const sub = document.getElementById('ai-mode-subtitle');
+
+      if (state.aiMode === 'gemini') {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+        label.textContent = 'Smart AI';
+        sub.textContent = 'Instant answers on places, food & safe routes';
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400';
+        label.textContent = 'Quick Lookup';
+        sub.textContent = 'Offline Instant Civic Directory Lookup';
+      }
+    }
+
+    function resetAiChatForCity(city) {
+      const feed = document.getElementById('ai-chat-feed');
+      feed.innerHTML = `
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl rounded-tl-sm p-3 shadow-xs">
+          <p class="text-xs font-bold text-blue-600 dark:text-blue-400 mb-1">Namaskar! ${city.name} Helper Ready</p>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Ask me about <strong>${city.places.length} verified places</strong> or <strong>${getCityAlerts(city.id).length} live road alerts</strong> in ${city.name}. Tap a sample question below to start!
+          </p>
+        </div>
+      `;
+
+      const chipsContainer = document.getElementById('ai-prompt-chips');
+      chipsContainer.innerHTML = city.quickPrompts.map(prompt => `
+        <button type="button" onclick="sendQuickPrompt('${prompt.replace(/'/g, "\\'")}')" class="shrink-0 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950/60 hover:text-blue-600 text-[11px] font-medium border border-slate-200 dark:border-slate-700 transition">
+          ${prompt}
+        </button>
+      `).join('');
+    }
+
+    function sendQuickPrompt(text) {
+      document.getElementById('ai-input').value = text;
+      handleAiSubmit(new Event('submit'));
+    }
+
+    function formatSimpleMarkdown(md) {
+      return md
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^\s*[-*]\s+(.*)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+        .replace(/\n{2,}/g, '</p><p>')
+        .replace(/\n/g, '<br/>');
+    }
+
+    async function handleAiSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('ai-input');
+      const query = input.value.trim();
+      if (!query) return;
+
+      input.value = '';
+      const feed = document.getElementById('ai-chat-feed');
+
+      // Append User Bubble
+      feed.innerHTML += `
+        <div class="flex justify-end">
+          <div class="bg-blue-600 text-white rounded-2xl rounded-tr-sm px-3.5 py-2 text-xs max-w-[85%] shadow-xs">
+            ${escapeHtml(query)}
+          </div>
+        </div>
+      `;
+
+      const loadingId = 'ai-loading-' + Date.now();
+      feed.innerHTML += `
+        <div id="${loadingId}" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl rounded-tl-sm p-3 text-xs text-slate-500 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
+          <span>Checking ${MAHARASHTRA_DATA[state.currentCity].name} guide...</span>
+        </div>
+      `;
+      feed.scrollTop = feed.scrollHeight;
+
+      const city = MAHARASHTRA_DATA[state.currentCity];
+      const alerts = getCityAlerts(state.currentCity);
+
+      let replyHtml = '';
+      if (state.aiMode === 'rules') {
+        replyHtml = runRuleBasedGuide(query, city, alerts);
+      } else {
+        replyHtml = await runGeminiGuide(query, city, alerts);
+      }
+
+      const loadingEl = document.getElementById(loadingId);
+      if (loadingEl) {
+        loadingEl.outerHTML = `
+          <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl rounded-tl-sm p-3 text-xs text-slate-700 dark:text-slate-200 leading-relaxed ai-prose shadow-xs">
+            ${replyHtml}
+          </div>
+        `;
+      }
+      feed.scrollTop = feed.scrollHeight;
+    }
+
+    function runRuleBasedGuide(query, city, alerts) {
+      const q = query.toLowerCase();
+      let matches = [...city.places];
+
+      if (q.includes('wheelchair') || q.includes('accessible') || q.includes('senior')) {
+        matches = matches.filter(p => p.wheelchair);
+      }
+      if (q.includes('veg') || q.includes('food') || q.includes('eat') || q.includes('breakfast') || q.includes('misal')) {
+        const food = matches.filter(p => p.category === 'Food & Dining' || p.vegFriendly);
+        if (food.length) matches = food;
+      }
+      if (q.includes('free') || q.includes('budget') || q.includes('student')) {
+        matches = matches.filter(p => p.cost === 'Free' || p.cost === '₹');
+      }
+
+      const topPlaces = matches.slice(0, 3);
+      const alertSummary = alerts.length
+        ? `⚠️ <strong>Active ${city.shortBody} Advisory:</strong> ${alerts[0].type} at <em>${alerts[0].location}</em> (${alerts[0].desc})`
+        : `✅ No major road diversions reported right now.`;
+
+      return `
+        <p><strong>[${city.name} Recommendations]</strong></p>
+        <ul>
+          ${topPlaces.map(p => `<li><strong>${p.name}</strong> (${p.area}) — ${p.feeDetail}, ${p.wheelchair ? '♿ Wheelchair OK' : 'Steps present'}. Nearest transit: ${p.transit}.</li>`).join('')}
+        </ul>
+        <p>${alertSummary}</p>
+      `;
+    }
+
+    async function runGeminiGuide(query, city, alerts) {
+      const apiKey = ""; // Optional runtime key; automatically uses built-in Civic Rule Engine if blank
+      if (!apiKey) {
+        return runRuleBasedGuide(query, city, alerts);
+      }
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+      const systemPrompt = `You are the official "City Life — Maharashtra" Civic & Smart Mobility Concierge for ${city.name} (${city.municipalBody}).
+Answer concisely in 3-5 bullet points or 2 short paragraphs. Prioritize wheelchair accessibility, public transit connections, pure-veg options if asked, and explicitly warn users if any active municipal/citizen hazard affects their request.
+VERIFIED PLACES IN ${city.name.toUpperCase()}:
+${JSON.stringify(city.places.map(p => ({ name: p.name, category: p.category, area: p.area, cost: p.feeDetail, hours: p.hours, wheelchair: p.wheelchair, vegFriendly: p.vegFriendly, transit: p.transit })))}
+LIVE HAZARDS & ALERTS:
+${JSON.stringify(alerts.map(a => ({ type: a.type, severity: a.severity, location: a.location, desc: a.desc, status: a.status })))}`;
+
+      const payload = {
+        contents: [{ parts: [{ text: query }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] }
+      };
+
+      const delays = [1000, 2000, 4000];
+      for (let attempt = 0; attempt <= delays.length; attempt++) {
+        try {
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          const result = await response.json();
+          const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) {
+            return formatSimpleMarkdown(text);
+          }
+          throw new Error('Empty candidate');
+        } catch (err) {
+          if (attempt < delays.length) {
+            await new Promise(res => setTimeout(res, delays[attempt]));
+          } else {
+            return runRuleBasedGuide(query, city, alerts);
+          }
+        }
+      }
+    }
+
+    // =========================================================================
+    // 8. CITIZEN SAFETY REPORTING & COMMUNITY VERIFICATION UPVOTES
+    // =========================================================================
+    function renderAlertsFeed() {
+      const alerts = getCityAlerts(state.currentCity);
+      const container = document.getElementById('alerts-feed');
+
+      container.innerHTML = alerts.map(al => {
+        const isHigh = al.severity === 'High';
+        const isUpvoted = state.upvotedIds.includes(al.id);
+        const isCommunityVerified = al.verifiedCount >= 3 || al.status === 'Official Municipal';
+
+        const statusBadge = al.status === 'Official Municipal'
+          ? `<span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-bold text-[10px]">Official Municipal</span>`
+          : isCommunityVerified
+          ? `<span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 font-bold text-[10px]">✓ Community Verified (${al.verifiedCount})</span>`
+          : `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 font-semibold text-[10px]">Unverified (${al.verifiedCount}/3)</span>`;
+
+        return `
+          <div class="p-3 rounded-xl border ${isHigh ? 'border-rose-200 bg-rose-50/40 dark:border-rose-900/60 dark:bg-rose-950/20' : 'border-slate-200 bg-slate-50/60 dark:border-slate-800 dark:bg-slate-800/40'} space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-extrabold ${isHigh ? 'text-rose-700 dark:text-rose-400' : 'text-amber-700 dark:text-amber-400'}">
+                ${al.type}
+              </span>
+              ${statusBadge}
+            </div>
+            <p class="text-xs font-bold text-slate-900 dark:text-white">${al.location}</p>
+            <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-snug">${al.desc}</p>
+            <div class="flex items-center justify-between pt-1">
+              <span class="text-[10px] font-mono-code text-slate-400">${al.source}</span>
+              <button onclick="upvoteAlert('${al.id}')" class="px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 ${
+                isUpvoted
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-blue-400 text-slate-700 dark:text-slate-200'
+              }">
+                <i data-lucide="thumbs-up" class="w-3 h-3"></i>
+                <span>${isUpvoted ? 'Confirmed' : 'Confirm'} (${al.verifiedCount})</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function upvoteAlert(alertId) {
+      if (state.upvotedIds.includes(alertId)) {
+        showToast('You have already confirmed this civic notice.', 'info');
+        return;
+      }
+
+      state.upvotedIds.push(alertId);
+
+      // Update count in custom reports or base reports
+      const customList = state.userReports[state.currentCity] || [];
+      const customTarget = customList.find(a => a.id === alertId);
+      if (customTarget) {
+        customTarget.verifiedCount += 1;
+        if (customTarget.verifiedCount >= 3) customTarget.status = 'Community Verified';
+      } else {
+        const baseTarget = MAHARASHTRA_DATA[state.currentCity].alerts.find(a => a.id === alertId);
+        if (baseTarget) {
+          baseTarget.verifiedCount += 1;
+          if (baseTarget.verifiedCount >= 3 && baseTarget.status !== 'Official Municipal') {
+            baseTarget.status = 'Community Verified';
+          }
+        }
+      }
+
+      savePersistedState();
+      renderAlertsFeed();
+      renderMapMarkers();
+      showToast('Thank you! Community confirmation recorded.', 'success');
+    }
+
+    function openReportModal(lat = null, lng = null) {
+      const city = MAHARASHTRA_DATA[state.currentCity];
+      document.getElementById('report-lat').value = lat || city.center[0];
+      document.getElementById('report-lng').value = lng || city.center[1];
+      document.getElementById('report-modal').classList.remove('hidden');
+    }
+
+    function closeReportModal() {
+      document.getElementById('report-modal').classList.add('hidden');
+    }
+
+    function submitCitizenReport(e) {
+      e.preventDefault();
+      const type = document.getElementById('report-type').value;
+      const severity = document.getElementById('report-severity').value;
+      const location = document.getElementById('report-location-name').value.trim();
+      const lat = parseFloat(document.getElementById('report-lat').value);
+      const lng = parseFloat(document.getElementById('report-lng').value);
+      const desc = document.getElementById('report-desc').value.trim();
+
+      const newReport = {
+        id: 'usr-' + Date.now(),
+        type,
+        severity,
+        location,
+        lat,
+        lng,
+        desc,
+        source: 'Citizen Live Report',
+        verifiedCount: 1,
+        status: 'Unverified'
+      };
+
+      if (!state.userReports[state.currentCity]) {
+        state.userReports[state.currentCity] = [];
+      }
+      state.userReports[state.currentCity].unshift(newReport);
+      savePersistedState();
+
+      closeReportModal();
+      e.target.reset();
+      droppedPinLayerGroup.clearLayers();
+
+      const alertsCount = getCityAlerts(state.currentCity).length;
+      document.getElementById('tab-alerts-pill').textContent = alertsCount;
+
+      renderTelemetryCards(MAHARASHTRA_DATA[state.currentCity]);
+      renderMapMarkers();
+      renderAlertsFeed();
+      if (state.drawerMode === 'directions') renderDirectionsPanel();
+
+      switchMainTab('map');
+      map.flyTo([lat, lng], 15, { duration: 0.9 });
+      showToast('Issue added to the live map!', 'success');
+    }
+
+    // =========================================================================
+    // 9. DIRECTORY FILTERING & SIDE-BY-SIDE COMPARISON MATRIX
+    // =========================================================================
+    const CATEGORIES = [
+      'All',
+      'Historical',
+      'Cultural & Temples',
+      'Food & Dining',
+      'Parks & Nature',
+      'Student / Budget',
+      'Public Facilities'
+    ];
+
+    function renderCategoryPills() {
+      const container = document.getElementById('category-pills');
+      container.innerHTML = CATEGORIES.map(cat => {
+        const active = state.category === cat;
+        return `
+          <button onclick="setCategory('${cat}')"
+            class="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold border transition ${
+              active
+                ? 'bg-slate-900 text-white border-slate-900 dark:bg-blue-600 dark:border-blue-600'
+                : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-400'
+            }">
+            ${cat}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setCategory(cat) {
+      state.category = cat;
+      renderCategoryPills();
+      renderPlacesGrid();
+    }
+
+    function toggleBooleanFilter(type) {
+      if (type === 'wheelchair') {
+        state.wheelchairOnly = !state.wheelchairOnly;
+        const btn = document.getElementById('filter-wheelchair');
+        btn.classList.toggle('bg-blue-50', state.wheelchairOnly);
+        btn.classList.toggle('border-blue-500', state.wheelchairOnly);
+        btn.classList.toggle('text-blue-700', state.wheelchairOnly);
+      } else if (type === 'veg') {
+        state.vegOnly = !state.vegOnly;
+        const btn = document.getElementById('filter-veg');
+        btn.classList.toggle('bg-emerald-50', state.vegOnly);
+        btn.classList.toggle('border-emerald-500', state.vegOnly);
+        btn.classList.toggle('text-emerald-700', state.vegOnly);
+      }
+      renderPlacesGrid();
+    }
+
+    function renderPlacesGrid() {
+      const city = MAHARASHTRA_DATA[state.currentCity];
+      const search = document.getElementById('place-search').value.toLowerCase().trim();
+      const costFilter = document.getElementById('filter-cost').value;
+
+      const filtered = city.places.filter(p => {
+        if (state.category !== 'All' && p.category !== state.category) return false;
+        if (state.wheelchairOnly && !p.wheelchair) return false;
+        if (state.vegOnly && !p.vegFriendly) return false;
+        if (costFilter !== 'all' && p.cost !== costFilter) return false;
+        if (search) {
+          const hay = `${p.name} ${p.area} ${p.category} ${p.summary} ${p.transit}`.toLowerCase();
+          if (!hay.includes(search)) return false;
+        }
+        return true;
+      });
+
+      const grid = document.getElementById('places-grid');
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-10 text-center bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
+            <p class="font-bold text-sm text-slate-700 dark:text-slate-200">No venues match your current filter combination.</p>
+            <p class="text-xs text-slate-500 mt-1">Try resetting category or accessibility toggles.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(p => {
+        const isSelected = state.compareList.includes(p.id);
+        return `
+          <article class="rounded-2xl border ${isSelected ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-slate-200 dark:border-slate-800'} bg-slate-50/60 dark:bg-slate-800/40 p-4 flex flex-col justify-between transition hover:shadow-md">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200">
+                  ${p.category}
+                </span>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-bold text-amber-500">★ ${p.rating}</span>
+                  <span class="font-mono-code text-xs font-bold px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
+                    ${p.cost}
+                  </span>
+                </div>
+              </div>
+
+              <h3 class="font-extrabold text-base text-slate-900 dark:text-white leading-snug">${p.name}</h3>
+              <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
+                <i data-lucide="map-pin" class="w-3 h-3 text-orange-500"></i> ${p.area}
+              </p>
+
+              <p class="text-xs text-slate-600 dark:text-slate-300 mt-2.5 leading-relaxed">
+                ${p.summary}
+              </p>
+
+              <!-- Civic Metadata Chips -->
+              <div class="flex flex-wrap gap-1.5 mt-3 text-[11px] font-semibold">
+                <span class="px-2 py-0.5 rounded-md ${p.wheelchair ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-300' : 'bg-slate-200/70 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}">
+                  ${p.wheelchair ? '♿ Wheelchair Accessible' : 'Steps / Partial Access'}
+                </span>
+                ${p.vegFriendly ? '<span class="px-2 py-0.5 rounded-md bg-green-50 text-green-700 dark:bg-green-950/70 dark:text-green-300">🌿 Veg Friendly</span>' : ''}
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-200/70 dark:border-slate-700/70 space-y-2.5">
+              <div class="text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5">
+                <div><strong>Hours:</strong> ${p.hours}</div>
+                <div><strong>Transit:</strong> ${p.transit}</div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button onclick="openPlaceFromDirectory('${p.id}')" class="flex-1 py-1.5 px-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition flex items-center justify-center gap-1">
+                  <i data-lucide="map-pin" class="w-3 h-3"></i> Show on Map
+                </button>
+                <button onclick="toggleCompare('${p.id}')" class="flex-1 py-1.5 px-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 ${
+                  isSelected
+                    ? 'bg-slate-900 text-white dark:bg-slate-200 dark:text-slate-900'
+                    : 'bg-slate-200/70 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100'
+                }">
+                  <i data-lucide="${isSelected ? 'check' : 'plus'}" class="w-3 h-3"></i>
+                  <span>${isSelected ? 'Selected' : 'Compare'}</span>
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function openPlaceFromDirectory(placeId) {
+      switchMainTab('map');
+      openPlaceDrawer(placeId);
+    }
+
+    function toggleCompare(placeId) {
+      const idx = state.compareList.indexOf(placeId);
+      if (idx > -1) {
+        state.compareList.splice(idx, 1);
+      } else {
+        if (state.compareList.length >= 3) {
+          showToast('Maximum 3 venues can be compared side-by-side.', 'info');
+          return;
+        }
+        state.compareList.push(placeId);
+      }
+      updateCompareButton();
+      renderPlacesGrid();
+    }
+
+    function updateCompareButton() {
+      const btn = document.getElementById('open-compare-btn');
+      const count = state.compareList.length;
+      document.getElementById('compare-count').textContent = count;
+
+      if (count >= 2) {
+        btn.disabled = false;
+        btn.className = 'px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-sm cursor-pointer transition flex items-center gap-2';
+      } else {
+        btn.disabled = true;
+        btn.className = 'px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed transition flex items-center gap-2';
+      }
+    }
+
+    function openCompareModal() {
+      const city = MAHARASHTRA_DATA[state.currentCity];
+      const selected = state.compareList.map(id => city.places.find(p => p.id === id)).filter(Boolean);
+      if (selected.length < 2) return;
+
+      const rows = [
+        { label: 'Neighborhood / Area', fn: p => p.area },
+        { label: 'Category', fn: p => p.category },
+        { label: 'Entry / Budget', fn: p => `${p.cost} (${p.feeDetail})` },
+        { label: 'Operating Hours', fn: p => p.hours },
+        { label: 'Wheelchair Access', fn: p => p.wheelchair ? '✅ Step-Free Accessible' : '⚠️ Steps Present' },
+        { label: 'Dietary Options', fn: p => p.vegFriendly ? '🌿 Pure Veg / Veg Options' : 'Standard' },
+        { label: 'Nearest Transit Hub', fn: p => p.transit },
+        { label: 'Civic Verification', fn: p => p.verifiedBy }
+      ];
+
+      document.getElementById('compare-table-container').innerHTML = `
+        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <thead>
+            <tr class="border-b border-slate-200 dark:border-slate-700">
+              <th class="py-3 px-3 font-bold text-slate-500 w-1/4">Civic Attribute</th>
+              ${selected.map(p => `<th class="py-3 px-3 font-extrabold text-slate-900 dark:text-white">${p.name}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+            ${rows.map(r => `
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-slate-500 dark:text-slate-400">${r.label}</td>
+                ${selected.map(p => `<td class="py-2.5 px-3 font-medium">${r.fn(p)}</td>`).join('')}
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+
+      document.getElementById('compare-modal').classList.remove('hidden');
+    }
+
+    function closeCompareModal() {
+      document.getElementById('compare-modal').classList.add('hidden');
+    }
+
+    function clearComparison() {
+      state.compareList = [];
+      updateCompareButton();
+      renderPlacesGrid();
+      closeCompareModal();
+    }
+
+    // =========================================================================
+    // 10. BILINGUAL TOGGLE, DARK MODE & TOAST HELPERS
+    // =========================================================================
+    function toggleLanguage() {
+      state.lang = state.lang === 'en' ? 'mr' : 'en';
+      document.getElementById('lang-label').textContent = state.lang === 'en' ? 'मराठी' : 'English';
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (I18N[state.lang][key]) {
+          el.textContent = I18N[state.lang][key];
+        }
+      });
+
+      switchCity(state.currentCity, true);
+    }
+
+    function toggleTheme() {
+      state.darkMode = !state.darkMode;
+      document.documentElement.classList.toggle('dark', state.darkMode);
+      const icon = document.getElementById('theme-icon');
+      icon.setAttribute('data-lucide', state.darkMode ? 'sun' : 'moon');
+      setMapBaseLayer(state.darkMode ? 'dark' : 'street', true);
+      lucide.createIcons();
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const bg = type === 'success'
+        ? 'bg-emerald-600 text-white'
+        : 'bg-slate-900 dark:bg-slate-800 text-white border border-slate-700';
+      const el = document.createElement('div');
+      el.className = `${bg} px-4 py-3 rounded-xl shadow-lg text-xs font-semibold pointer-events-auto transition-all`;
+      el.textContent = message;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 300);
+      }, 3200);
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, m => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[m]);
+    }
+  </script>
+</body>
+</html>
